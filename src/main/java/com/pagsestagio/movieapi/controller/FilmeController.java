@@ -1,6 +1,9 @@
 package com.pagsestagio.movieapi.controller;
 
 import com.pagsestagio.movieapi.model.Filme;
+import com.pagsestagio.movieapi.model.FilmeResposta;
+import com.pagsestagio.movieapi.model.FilmeRespostaError;
+import com.pagsestagio.movieapi.model.FilmeRespostaSuccess;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,54 +14,74 @@ import java.util.Map;
 @RequestMapping("/filmes")
 public class FilmeController {
 
-    // Criação de um map para relacionar cada nome de filme com um número identificador.
     Map<Integer, String> nomesDeFilmesPorId = new HashMap<>();
 
-    //Criação de cada um dos métodos que irão tratar das requisições quanto à lista de filmes.
     @GetMapping("/{id}")
     public ResponseEntity<Object> mensagemRequisicaoGet(@PathVariable Integer id){
+
+        ResponseEntity<Object> respostaRequisicao = null;
+
         if(nomesDeFilmesPorId.containsKey(id)){
-            return ResponseEntity.ok(nomesDeFilmesPorId.get(id));
+            respostaRequisicao = ResponseEntity.ok(nomesDeFilmesPorId.get(id));
         } else {
-            return ResponseEntity.notFound().build();
+            respostaRequisicao = ResponseEntity.notFound().build();
         }
+
+        return respostaRequisicao;
 
     }
 
     @PostMapping
-    public ResponseEntity<Object> mensagemRequisicaoPost(@RequestBody Filme filme) {
+    public ResponseEntity<FilmeResposta> mensagemRequisicaoPost(@RequestBody Filme filme) {
+
+        ResponseEntity<FilmeResposta> respostaRequisicao = null;
+
         if (filme.identificador() == null || filme.nomeFilme() == null) {
-            return ResponseEntity.badRequest().body("O identificador e o nome do filme devem ser inseridos.");
+            respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaError("O identificador e o nome do filme devem ser inseridos."));
         }  else if (nomesDeFilmesPorId.containsKey(filme.identificador())) {
-            return ResponseEntity.badRequest().body("O registro já existe, faça um PUT para atualizar.");
+            respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaError("O registro já existe, faça um PUT para atualizar."));
         } else {
             nomesDeFilmesPorId.put(filme.identificador(), filme.nomeFilme());
-            return ResponseEntity.ok(nomesDeFilmesPorId);
+            respostaRequisicao = ResponseEntity.ok(new FilmeRespostaSuccess(nomesDeFilmesPorId));
         }
-    }
 
+        return respostaRequisicao;
+
+    }
 
     @PutMapping
     public ResponseEntity<Object> mensagemRequisicaoPut(@RequestBody Filme filme) {
+
+        ResponseEntity<Object> respostaRequisicao = null;
+
         if (nomesDeFilmesPorId.containsKey(filme.identificador())) {
             if(filme.nomeFilme() != null){
                 nomesDeFilmesPorId.put(filme.identificador(), filme.nomeFilme());
-                return ResponseEntity.ok(nomesDeFilmesPorId);
+                respostaRequisicao = ResponseEntity.ok(nomesDeFilmesPorId);
             } else {
-                return ResponseEntity.badRequest().body("O identificador e o nome do filme são obrigatórios.");
+                respostaRequisicao = ResponseEntity.badRequest().body("O identificador e o nome do filme são obrigatórios.");
             }
         } else {
-            return ResponseEntity.badRequest().body("O registro não existe, faça um POST para inserir.");
+            respostaRequisicao = ResponseEntity.badRequest().body("O registro não existe, faça um POST para inserir.");
         }
+
+        return respostaRequisicao;
+
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> mensagemRequisicaoDelete(@PathVariable Integer id){
+
+        ResponseEntity<Object> respostaRequisicao = null;
+
         if(nomesDeFilmesPorId.containsKey(id)){
             nomesDeFilmesPorId.remove(id);
-            return ResponseEntity.ok(nomesDeFilmesPorId);
+            respostaRequisicao = ResponseEntity.ok(nomesDeFilmesPorId);
         } else {
-            return ResponseEntity.notFound().build();
+            respostaRequisicao = ResponseEntity.notFound().build();
         }
+
+        return respostaRequisicao;
+
     }
 }
