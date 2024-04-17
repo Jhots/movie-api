@@ -2,6 +2,7 @@ package com.pagsestagio.movieapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pagsestagio.movieapi.model.Filme;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,6 +36,11 @@ class FilmeControllerTests {
     Filme filmeIdentificadorENomeDois= new Filme(1000, "Vingadores");
     Filme filmeRepeticaoIdentificador = new Filme(1, "Homem Aranha");
 
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        controller.nomesDeFilmesPorId.clear();
+    }
 
 
     @Test
@@ -239,5 +245,3 @@ class FilmeControllerTests {
     }
 
 }
-
-
