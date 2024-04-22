@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -29,6 +30,8 @@ class FilmeControllerTests {
     @Autowired
     private FilmeController controller;
 
+    @Autowired
+    private BancoDeDados filmes;
 
     Filme filmeSomenteIdentificador = new Filme(1, null);
     Filme filmeSomenteNome = new Filme(null, "Avatar");
@@ -39,7 +42,7 @@ class FilmeControllerTests {
 
     @BeforeEach
     public void setUp() throws Exception {
-        controller.nomesDeFilmesPorId.clear();
+        filmes.getBancoDeDados().clear();
     }
 
 
