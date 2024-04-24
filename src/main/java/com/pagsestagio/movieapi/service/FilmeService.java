@@ -1,12 +1,10 @@
 package com.pagsestagio.movieapi.service;
 
-import com.pagsestagio.movieapi.controller.resposta.FilmeResposta;
-import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaErroRetornaMensagem;
-import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaSucessoRetornaFilme;
-import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaSucessoRetornaLista;
 import com.pagsestagio.movieapi.model.Filme;
+import com.pagsestagio.movieapi.model.resultado.FilmeResultado;
+import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilme;
+import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaLista;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -21,70 +19,66 @@ public class FilmeService {
         this.nomesDeFilmesPorId = nomesDeFilmesPorId;
     }
 
-    public FilmeResposta pegarFilmePeloId(Integer id){
-        FilmeResposta retornoRequisicao = null;
+    public FilmeResultado pegarFilmePeloId(Integer id){
+        FilmeResultado retornoDoFilmePorIdentificador = null;
 
         if(nomesDeFilmesPorId.containsKey(id)){
             String nomeDoFilmeEncontrado = nomesDeFilmesPorId.get(id);
-            retornoRequisicao = new FilmeRespostaSucessoRetornaFilme(id, nomeDoFilmeEncontrado);
+            retornoDoFilmePorIdentificador = new FilmeResultadoRetornaFilme(new Filme(id, nomeDoFilmeEncontrado), null);
         } else {
-            retornoRequisicao = new FilmeRespostaErroRetornaMensagem("Filme não encontrado!");
+            retornoDoFilmePorIdentificador = new FilmeResultadoRetornaFilme(null, new RuntimeException("Identificador não encontrado! Não foi possível obter o filme."));
         }
 
-        return retornoRequisicao;
-
+        return retornoDoFilmePorIdentificador;
     }
 
-    public FilmeResposta criarFilme(Filme filme) {
-        //Se mandar um filme sem id e nome deve retornar bad request com a string "O identificador e o nome do filme devem ser inseridos".
-        //Se mandar um filme com id que já está contido na lista, deve retornar bad request com a string "O registro já existe, faça um PUT para atualizar".
-        //Se nenhum dos casos acima acontecerem, deve ser inserido o id e nome do filme na lista e retornar ok.
-        FilmeResposta respostaRequisicao = null;
+    public FilmeResultado criarFilme(Filme filme) {
+        FilmeResultado retornoCriacaoDeFilme = null;
 
         if (filme.identificador() == null || filme.nomeFilme() == null) {
-            respostaRequisicao = new FilmeRespostaErroRetornaMensagem("O identificador e o nome do filme devem ser inseridos.");
+            retornoCriacaoDeFilme = new FilmeResultadoRetornaFilme(null, new RuntimeException("O identificador e o nome do filme devem ser inseridos."));
         }  else if (nomesDeFilmesPorId.containsKey(filme.identificador())) {
-            respostaRequisicao = new FilmeRespostaErroRetornaMensagem("O registro já existe, faça um PUT para atualizar.");
+            retornoCriacaoDeFilme = new FilmeResultadoRetornaFilme(null, new RuntimeException("O registro já existe, faça um PUT para atualizar."));
         } else {
             nomesDeFilmesPorId.put(filme.identificador(), filme.nomeFilme());
-            respostaRequisicao = new FilmeRespostaSucessoRetornaLista(nomesDeFilmesPorId);
+            retornoCriacaoDeFilme = new FilmeResultadoRetornaLista((nomesDeFilmesPorId), null);
         }
 
-        return respostaRequisicao;
+        return retornoCriacaoDeFilme;
 
     }
 
-    public ResponseEntity<FilmeResposta> atualizarFilme(Filme filme) {
+    public FilmeResultado atualizarFilme(Filme filme) {
 
-        ResponseEntity<FilmeResposta> respostaRequisicao = null;
+        FilmeResultado retornoAtualizacaoFilme = null;
 
         if (nomesDeFilmesPorId.containsKey(filme.identificador())) {
             if(filme.nomeFilme() != null){
                 nomesDeFilmesPorId.put(filme.identificador(), filme.nomeFilme());
-                respostaRequisicao = ResponseEntity.ok(new FilmeRespostaSucessoRetornaLista(nomesDeFilmesPorId));
+                retornoAtualizacaoFilme = new FilmeResultadoRetornaLista((nomesDeFilmesPorId), null);
             } else {
-                respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaErroRetornaMensagem("O identificador e o nome do filme são obrigatórios."));
+                retornoAtualizacaoFilme = new FilmeResultadoRetornaFilme(null, new RuntimeException("O identificador e o nome do filme são obrigatórios."));
             }
         } else {
-            respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaErroRetornaMensagem("O registro não existe, faça um POST para inserir."));
+            retornoAtualizacaoFilme = new FilmeResultadoRetornaLista(null, new RuntimeException("O registro não existe, faça um POST para inserir."));
         }
 
-        return respostaRequisicao;
+        return retornoAtualizacaoFilme;
 
     }
 
-    public ResponseEntity<FilmeResposta> deletarFilmePeloId(Integer id){
+    public FilmeResultado deletarFilmePeloId(Integer id){
 
-        ResponseEntity<FilmeResposta> respostaRequisicao = null;
+        FilmeResultado retornoDeletarFilme = null;
 
         if(nomesDeFilmesPorId.containsKey(id)){
             nomesDeFilmesPorId.remove(id);
-            respostaRequisicao = ResponseEntity.ok(new FilmeRespostaSucessoRetornaLista(nomesDeFilmesPorId));
+            retornoDeletarFilme = new FilmeResultadoRetornaLista(nomesDeFilmesPorId, null);
         } else {
-            respostaRequisicao = ResponseEntity.notFound().build();
+            retornoDeletarFilme = new FilmeResultadoRetornaLista(null, new RuntimeException("Identificador não encontrado! Não foi possível excluir o filme."));
         }
 
-        return respostaRequisicao;
+        return retornoDeletarFilme;
 
     }
 }
