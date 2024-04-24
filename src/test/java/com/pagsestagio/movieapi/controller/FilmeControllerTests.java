@@ -5,11 +5,14 @@ import com.pagsestagio.movieapi.model.Filme;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,11 +31,8 @@ class FilmeControllerTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private FilmeController controller;
-
-    @Autowired
-    private BancoDeDados filmes;
-
+    @Qualifier("bancoDados")
+    Map<Integer, String> nomesDeFilmesPorId;
     Filme filmeSomenteIdentificador = new Filme(1, null);
     Filme filmeSomenteNome = new Filme(null, "Avatar");
     Filme filmeIdentificadorENomeUm = new Filme(1, "Avatar");
@@ -42,7 +42,7 @@ class FilmeControllerTests {
 
     @BeforeEach
     public void setUp() throws Exception {
-        filmes.getBancoDeDados().clear();
+        nomesDeFilmesPorId.clear();
     }
 
 

@@ -21,32 +21,33 @@ public class FilmeService {
         this.nomesDeFilmesPorId = nomesDeFilmesPorId;
     }
 
-    public ResponseEntity<FilmeResposta> pegarFilmePeloId(Integer id){
-
-        ResponseEntity<FilmeResposta> respostaRequisicao = null;
+    public FilmeResposta pegarFilmePeloId(Integer id){
+        FilmeResposta retornoRequisicao = null;
 
         if(nomesDeFilmesPorId.containsKey(id)){
             String nomeDoFilmeEncontrado = nomesDeFilmesPorId.get(id);
-            respostaRequisicao = ResponseEntity.ok(new FilmeRespostaSucessoRetornaFilme(id, nomeDoFilmeEncontrado));
+            retornoRequisicao = new FilmeRespostaSucessoRetornaFilme(id, nomeDoFilmeEncontrado);
         } else {
-            respostaRequisicao = ResponseEntity.notFound().build();
+            retornoRequisicao = new FilmeRespostaErroRetornaMensagem("Filme não encontrado!");
         }
 
-        return respostaRequisicao;
+        return retornoRequisicao;
 
     }
 
-    public ResponseEntity<FilmeResposta> criarFilme(Filme filme) {
-
-        ResponseEntity<FilmeResposta> respostaRequisicao = null;
+    public FilmeResposta criarFilme(Filme filme) {
+        //Se mandar um filme sem id e nome deve retornar bad request com a string "O identificador e o nome do filme devem ser inseridos".
+        //Se mandar um filme com id que já está contido na lista, deve retornar bad request com a string "O registro já existe, faça um PUT para atualizar".
+        //Se nenhum dos casos acima acontecerem, deve ser inserido o id e nome do filme na lista e retornar ok.
+        FilmeResposta respostaRequisicao = null;
 
         if (filme.identificador() == null || filme.nomeFilme() == null) {
-            respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaErroRetornaMensagem("O identificador e o nome do filme devem ser inseridos."));
+            respostaRequisicao = new FilmeRespostaErroRetornaMensagem("O identificador e o nome do filme devem ser inseridos.");
         }  else if (nomesDeFilmesPorId.containsKey(filme.identificador())) {
-            respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaErroRetornaMensagem("O registro já existe, faça um PUT para atualizar."));
+            respostaRequisicao = new FilmeRespostaErroRetornaMensagem("O registro já existe, faça um PUT para atualizar.");
         } else {
             nomesDeFilmesPorId.put(filme.identificador(), filme.nomeFilme());
-            respostaRequisicao = ResponseEntity.ok(new FilmeRespostaSucessoRetornaLista(nomesDeFilmesPorId));
+            respostaRequisicao = new FilmeRespostaSucessoRetornaLista(nomesDeFilmesPorId);
         }
 
         return respostaRequisicao;

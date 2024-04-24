@@ -1,4 +1,4 @@
-package com.pagsestagio.movieapi.controller;
+package com.pagsestagio.movieapi.model;
 
 
 import org.springframework.context.annotation.Bean;
