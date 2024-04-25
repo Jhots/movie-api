@@ -134,7 +134,7 @@ class FilmeControllerTests {
         var resultadoRequiquicaoDeFilmeAtravesDeIdentificadorNaoExistente = mockMvc.perform(requiquicaoDeFilmeAtravesDeIdentificadorNaoExistente);
 
         resultadoRequiquicaoDeFilmeComIdentificadorENome.andExpect(status().isOk());
-        resultadoRequiquicaoDeFilmeAtravesDeIdentificadorNaoExistente.andExpect(status().isNotFound());
+        resultadoRequiquicaoDeFilmeAtravesDeIdentificadorNaoExistente.andExpect(status().isBadRequest());
 
     }
 
@@ -168,7 +168,7 @@ class FilmeControllerTests {
         var resultadoRequiquicaoDeFilmeAtravesDeIdentificadorNaoExistente = mockMvc.perform(requiquicaoDeFilmeAtravesDeIdentificadorNaoExistente);
 
         resultadoRequiquicaoDeFilmeComIdentificadorENome.andExpect(status().isOk());
-        resultadoRequiquicaoDeFilmeAtravesDeIdentificadorNaoExistente.andExpect(status().isNotFound());
+        resultadoRequiquicaoDeFilmeAtravesDeIdentificadorNaoExistente.andExpect(status().isBadRequest());
 
     }
 

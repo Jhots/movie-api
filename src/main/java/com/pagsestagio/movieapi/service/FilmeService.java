@@ -1,13 +1,14 @@
 package com.pagsestagio.movieapi.service;
 
 import com.pagsestagio.movieapi.model.Filme;
-import com.pagsestagio.movieapi.model.resultado.FilmeResultado;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilme;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaLista;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,8 +20,20 @@ public class FilmeService {
         this.nomesDeFilmesPorId = nomesDeFilmesPorId;
     }
 
-    public FilmeResultado pegarFilmePeloId(Integer id){
-        FilmeResultado retornoDoFilmePorIdentificador = null;
+    public List<Filme> converterMapParaLista(Map<Integer, String> nomesDeFilmesPorId) {
+        List<Filme> listaFilmes = new ArrayList<>();
+
+        for (Map.Entry<Integer, String> entry : nomesDeFilmesPorId.entrySet()) {
+            Integer id = entry.getKey();
+            String nomeFilme = entry.getValue();
+            listaFilmes.add(new Filme(id, nomeFilme));
+        }
+
+        return listaFilmes;
+    }
+
+    public FilmeResultadoRetornaFilme pegarFilmePeloId(Integer id){
+        FilmeResultadoRetornaFilme retornoDoFilmePorIdentificador = null;
 
         if(nomesDeFilmesPorId.containsKey(id)){
             String nomeDoFilmeEncontrado = nomesDeFilmesPorId.get(id);
@@ -32,32 +45,32 @@ public class FilmeService {
         return retornoDoFilmePorIdentificador;
     }
 
-    public FilmeResultado criarFilme(Filme filme) {
-        FilmeResultado retornoCriacaoDeFilme = null;
+    public FilmeResultadoRetornaLista criarFilme(Filme filme) {
+        FilmeResultadoRetornaLista retornoCriacaoDeFilme = null;
 
         if (filme.identificador() == null || filme.nomeFilme() == null) {
-            retornoCriacaoDeFilme = new FilmeResultadoRetornaFilme(null, new RuntimeException("O identificador e o nome do filme devem ser inseridos."));
+            retornoCriacaoDeFilme = new FilmeResultadoRetornaLista(null, new RuntimeException("O identificador e o nome do filme devem ser inseridos."));
         }  else if (nomesDeFilmesPorId.containsKey(filme.identificador())) {
-            retornoCriacaoDeFilme = new FilmeResultadoRetornaFilme(null, new RuntimeException("O registro já existe, faça um PUT para atualizar."));
+            retornoCriacaoDeFilme = new FilmeResultadoRetornaLista(null, new RuntimeException("O registro já existe, faça um PUT para atualizar."));
         } else {
             nomesDeFilmesPorId.put(filme.identificador(), filme.nomeFilme());
-            retornoCriacaoDeFilme = new FilmeResultadoRetornaLista((nomesDeFilmesPorId), null);
+            retornoCriacaoDeFilme = new FilmeResultadoRetornaLista(converterMapParaLista(nomesDeFilmesPorId), null);
         }
 
         return retornoCriacaoDeFilme;
 
     }
 
-    public FilmeResultado atualizarFilme(Filme filme) {
+    public FilmeResultadoRetornaLista atualizarFilme(Filme filme) {
 
-        FilmeResultado retornoAtualizacaoFilme = null;
+        FilmeResultadoRetornaLista retornoAtualizacaoFilme = null;
 
         if (nomesDeFilmesPorId.containsKey(filme.identificador())) {
             if(filme.nomeFilme() != null){
                 nomesDeFilmesPorId.put(filme.identificador(), filme.nomeFilme());
-                retornoAtualizacaoFilme = new FilmeResultadoRetornaLista((nomesDeFilmesPorId), null);
+                retornoAtualizacaoFilme = new FilmeResultadoRetornaLista(converterMapParaLista(nomesDeFilmesPorId), null);
             } else {
-                retornoAtualizacaoFilme = new FilmeResultadoRetornaFilme(null, new RuntimeException("O identificador e o nome do filme são obrigatórios."));
+                retornoAtualizacaoFilme = new FilmeResultadoRetornaLista(null, new RuntimeException("O identificador e o nome do filme são obrigatórios."));
             }
         } else {
             retornoAtualizacaoFilme = new FilmeResultadoRetornaLista(null, new RuntimeException("O registro não existe, faça um POST para inserir."));
@@ -67,13 +80,13 @@ public class FilmeService {
 
     }
 
-    public FilmeResultado deletarFilmePeloId(Integer id){
+    public FilmeResultadoRetornaLista deletarFilmePeloId(Integer id){
 
-        FilmeResultado retornoDeletarFilme = null;
+        FilmeResultadoRetornaLista retornoDeletarFilme = null;
 
         if(nomesDeFilmesPorId.containsKey(id)){
             nomesDeFilmesPorId.remove(id);
-            retornoDeletarFilme = new FilmeResultadoRetornaLista(nomesDeFilmesPorId, null);
+            retornoDeletarFilme = new FilmeResultadoRetornaLista(converterMapParaLista(nomesDeFilmesPorId), null);
         } else {
             retornoDeletarFilme = new FilmeResultadoRetornaLista(null, new RuntimeException("Identificador não encontrado! Não foi possível excluir o filme."));
         }

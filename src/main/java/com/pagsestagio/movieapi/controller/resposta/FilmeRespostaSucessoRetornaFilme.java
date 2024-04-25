@@ -1,3 +1,5 @@
 package com.pagsestagio.movieapi.controller.resposta;
 
-public record FilmeRespostaSucessoRetornaFilme(Integer identificador, String nomeDoFilme) implements FilmeResposta {}
+import com.pagsestagio.movieapi.model.Filme;
+
+public record FilmeRespostaSucessoRetornaFilme(Filme filme, Exception excecao) implements FilmeResposta {}
