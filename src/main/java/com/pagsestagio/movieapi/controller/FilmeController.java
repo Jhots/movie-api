@@ -28,7 +28,7 @@ public class FilmeController {
         FilmeResultadoRetornaFilme retornoService = filmeService.pegarFilmePeloId(id);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
-        if (retornoService.excecao() != null){
+        if (retornoService.excecao() == null){
             respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaSucessoRetornaFilme(retornoService.filme(), null));
         } else {
             respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaSucessoRetornaFilme(null, retornoService.excecao()));
@@ -41,7 +41,7 @@ public class FilmeController {
         FilmeResultadoRetornaLista retornoService = filmeService.criarFilme(filme);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
-        if(retornoService.excecao() != null){
+        if(retornoService.excecao() == null){
             respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaSucessoRetornaLista(retornoService.listaDeFilmes(), null));
         } else {
             respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaSucessoRetornaLista(null, retornoService.excecao()));
@@ -53,8 +53,8 @@ public class FilmeController {
     public ResponseEntity<FilmeResposta> atualizarFilme(@RequestBody Filme filme) {
         FilmeResultadoRetornaLista retornoService = filmeService.atualizarFilme(filme);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
-
-        if(retornoService.excecao() != null){
+// excecao == null
+        if(retornoService.excecao() == null){
             respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaSucessoRetornaLista(retornoService.listaDeFilmes(), null));
         } else {
             respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaSucessoRetornaLista(null, retornoService.excecao()));
@@ -67,7 +67,7 @@ public class FilmeController {
         FilmeResultadoRetornaLista retornoService = filmeService.deletarFilmePeloId(id);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
-        if(retornoService.excecao() != null){
+        if(retornoService.excecao() == null){
             respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaSucessoRetornaLista(retornoService.listaDeFilmes(), null));
         } else {
             respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaSucessoRetornaLista(null, retornoService.excecao()));
