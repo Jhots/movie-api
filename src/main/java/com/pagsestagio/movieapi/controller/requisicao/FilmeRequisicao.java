@@ -5,7 +5,7 @@ import com.pagsestagio.movieapi.model.Filme;
 public record FilmeRequisicao(Integer identificador, String nomeFilme) {
 
     public FilmeRequisicao(Filme filme){
-        this(filme.identificador(), filme.nomeFilme());
+        this(filme.getId(), filme.getNome());
 
     }
 

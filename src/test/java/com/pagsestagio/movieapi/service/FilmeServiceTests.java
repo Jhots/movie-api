@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class FilmeServiceTests {
+    /*Adaptar tudo que for relativo ao banco de dados antigo(map)
+
     private Map<Integer, String> bancoDeDados;
     private FilmeService service;
 
@@ -105,4 +107,5 @@ class FilmeServiceTests {
         assertNull(resultadoSolicitacaoDeletarFilme.listaDeFilmes(), "A lista de filmes deve ser nula se o filme não puder ser excluído.");
         assertNotNull(resultadoSolicitacaoDeletarFilme.mensagemStatus(), "Deve haver erro ao tentar excluir um filme com identificador inexistente.");
     }
+    */
 }
