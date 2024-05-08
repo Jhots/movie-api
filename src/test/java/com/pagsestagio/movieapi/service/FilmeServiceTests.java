@@ -2,34 +2,32 @@ package com.pagsestagio.movieapi.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTO;
-import org.junit.jupiter.api.BeforeEach;
+import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
+import com.pagsestagio.movieapi.repository.FilmeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @ExtendWith(MockitoExtension.class)
 class FilmeServiceTests {
-    /*Adaptar tudo que for relativo ao banco de dados antigo(map)
-
-    private Map<Integer, String> bancoDeDados;
+/*
+    @Autowired
+    private FilmeRepository filmeRepository;
     private FilmeService service;
 
-    @BeforeEach
-    public void inicializar() {
-        bancoDeDados = new HashMap<>();
-        service = new FilmeService(bancoDeDados);
-    }
+
 
     @Test
     public void devePegarUmFilmePorIdQuandoOFilmeExiste(){
-        bancoDeDados.put(1, "Matrix");
+        Filme filme = new Filme();
+        filme.setNome("Matrix");
+        Filme filmeSalvo = filmeRepository.save(filme);
 
-        var resultadoFilmePesquisado = service.pegarFilmePeloId(1);
+        FilmeResultadoRetornaFilmeOuMensagem resultadoFilmePesquisado = service.pegarFilmePeloId(filmeSalvo.getId());
 
         assertNotNull(resultadoFilmePesquisado.id(), "O id deve ser retornado quando o filme existe.");
         assertNull(resultadoFilmePesquisado.mensagemStatus(), "Não deve haver erro quando o filme existe.");
@@ -107,5 +105,5 @@ class FilmeServiceTests {
         assertNull(resultadoSolicitacaoDeletarFilme.listaDeFilmes(), "A lista de filmes deve ser nula se o filme não puder ser excluído.");
         assertNotNull(resultadoSolicitacaoDeletarFilme.mensagemStatus(), "Deve haver erro ao tentar excluir um filme com identificador inexistente.");
     }
-    */
+*/
 }

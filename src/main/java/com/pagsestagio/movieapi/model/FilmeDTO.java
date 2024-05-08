@@ -1,4 +1,6 @@
 package com.pagsestagio.movieapi.model;
 
-public record FilmeDTO(Integer identificador, String nomeFilme) {
+import java.util.UUID;
+
+public record FilmeDTO(UUID idPublico, String nomeFilme) {
 }

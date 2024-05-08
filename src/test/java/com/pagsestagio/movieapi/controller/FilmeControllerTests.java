@@ -2,6 +2,8 @@ package com.pagsestagio.movieapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pagsestagio.movieapi.model.Filme;
+import com.pagsestagio.movieapi.model.FilmeDTO;
+import com.pagsestagio.movieapi.repository.FilmeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
+import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,19 +32,19 @@ class FilmeControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    @Qualifier("bancoDados")
-    Map<Integer, String> nomesDeFilmesPorId;
-    Filme filmeSomenteIdentificador = new Filme(1, null);
-    Filme filmeSomenteNome = new Filme(null, "Avatar");
-    Filme filmeIdentificadorENomeUm = new Filme(1, "Avatar");
-    Filme filmeIdentificadorENomeDois= new Filme(1000, "Vingadores");
-    Filme filmeRepeticaoIdentificador = new Filme(1, "Homem Aranha");
+
+    UUID idPublicoaleatorio = UUID.randomUUID();
+
+
+    FilmeDTO filmeSomenteIdentificador = new FilmeDTO(idPublicoaleatorio,null);
+    FilmeDTO filmeSomenteNome = new FilmeDTO(null, "Avatar");
+    FilmeDTO filmeSemNomeEIdentificador = new FilmeDTO(null, null);
+    FilmeDTO filmeIdentificadorENomeUm = new FilmeDTO(idPublicoaleatorio, "Avatar");
 
 
     @BeforeEach
     public void setUp() throws Exception {
-        nomesDeFilmesPorId.clear();
+
     }
 
 
@@ -93,7 +96,7 @@ class FilmeControllerTests {
 
         var requiquicaoDeFilmeComIdentificadorJaExistente = post("/filmes")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeRepeticaoIdentificador));
+                .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
 
         var resultadoRequiquicaoDeFilmeComIdentificadorENome = mockMvc.perform(requiquicaoDeFilmeComIdentificadorENome);
         var resultadorequiquicaoDeFilmeComIdentificadorJaExistente = mockMvc.perform(requiquicaoDeFilmeComIdentificadorJaExistente);
@@ -110,7 +113,8 @@ class FilmeControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
 
-        var requiquicaoDeFilmeAtravesDeIdentificador = get("/filmes/1");
+        var requiquicaoDeFilmeAtravesDeIdentificador = get("/filmes/{}");
+
 
         var resultadoRequiquicaoDeFilmeComIdentificadorENome = mockMvc.perform(requiquicaoDeFilmeComIdentificadorENome);
         var resultadoRequiquicaoDeFilmeAtravesDeIdentificador = mockMvc.perform(requiquicaoDeFilmeAtravesDeIdentificador);
@@ -161,7 +165,7 @@ class FilmeControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
 
-        var requiquicaoDeFilmeAtravesDeIdentificadorNaoExistente = delete("/filmes/1000");
+        var requiquicaoDeFilmeAtravesDeIdentificadorNaoExistente = delete("/filmes/{id}");
 
         var resultadoRequiquicaoDeFilmeComIdentificadorENome = mockMvc.perform(requiquicaoDeFilmeComIdentificadorENome);
         var resultadoRequiquicaoDeFilmeAtravesDeIdentificadorNaoExistente = mockMvc.perform(requiquicaoDeFilmeAtravesDeIdentificadorNaoExistente);
@@ -217,7 +221,7 @@ class FilmeControllerTests {
 
         var requiquicaoDeFilmeComIdentificadorJaExistente = put("/filmes")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeRepeticaoIdentificador));
+                .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
 
         var resultadoRequiquicaoDeFilmeComIdentificadorENome = mockMvc.perform(requiquicaoDeFilmeComIdentificadorENome);
         var resultadoRequiquicaoDeFilmeComIdentificadorJaExistente = mockMvc.perform(requiquicaoDeFilmeComIdentificadorJaExistente);
@@ -234,9 +238,10 @@ class FilmeControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
 
+
         var requiquicaoDeFilmeComIdentificadorNaoPresenteNaLista = put("/filmes")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeIdentificadorENomeDois));
+                .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
 
         var resultadoRequiquicaoDeFilmeComIdentificadorENome = mockMvc.perform(requiquicaoDeFilmeComIdentificadorENome);
         var resultadoRequiquicaoDeFilmeComIdentificadorNaoPresenteNaLista = mockMvc.perform(requiquicaoDeFilmeComIdentificadorNaoPresenteNaLista);

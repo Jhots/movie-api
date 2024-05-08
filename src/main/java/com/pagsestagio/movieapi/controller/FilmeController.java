@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/filmes")
@@ -22,13 +24,13 @@ public class FilmeController {
         this.filmeService = filmeService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<FilmeResposta> pegarFilmePeloId(@PathVariable Integer id){
-        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.pegarFilmePeloId(id);
+    @GetMapping("/{idpublico}")
+    public ResponseEntity<FilmeResposta> pegarFilmePeloId(@PathVariable UUID idpublico){
+        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.pegarFilmePeloId(idpublico);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
         if (retornoService.mensagemStatus() == null){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.id(), retornoService.nomeFilme(), null));
+            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.idpublico(), retornoService.nomeFilme(), null));
         } else {
             respostaRequisicao = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
         }
@@ -41,7 +43,7 @@ public class FilmeController {
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
         if(retornoService.mensagemStatus() == null){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.id(), retornoService.nomeFilme(), null));
+            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.idpublico(), retornoService.nomeFilme(), null));
         } else {
             respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
         }
@@ -53,20 +55,20 @@ public class FilmeController {
         FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.atualizarFilme(filme);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
         if(retornoService.mensagemStatus() == null){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.id(), retornoService.nomeFilme(), null));
+            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.idpublico(), retornoService.nomeFilme(), null));
         } else {
             respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
         }
         return respostaRequisicao;
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<FilmeResposta> deletarFilmePeloId(@PathVariable Integer id){
-        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.deletarFilmePeloId(id);
+    @DeleteMapping("/{idpublico}")
+    public ResponseEntity<FilmeResposta> deletarFilmePeloId(@PathVariable UUID idpublico){
+        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.deletarFilmePeloId(idpublico);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
         if(retornoService.mensagemStatus() == null){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.id(), retornoService.nomeFilme(), null));
+            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.idpublico(), retornoService.nomeFilme(), null));
         } else {
             respostaRequisicao = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
         }

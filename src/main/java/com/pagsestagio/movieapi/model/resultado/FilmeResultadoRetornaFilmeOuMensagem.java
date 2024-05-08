@@ -1,5 +1,7 @@
 package com.pagsestagio.movieapi.model.resultado;
 
 
-public record FilmeResultadoRetornaFilmeOuMensagem(Integer id, String nomeFilme, String mensagemStatus) implements FilmeResultado {
+import java.util.UUID;
+
+public record FilmeResultadoRetornaFilmeOuMensagem(UUID idpublico, String nomeFilme, String mensagemStatus) implements FilmeResultado {
 }
