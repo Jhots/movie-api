@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
-import static jakarta.persistence.GenerationType.UUID;
 
 @Service
 public class FilmeService {

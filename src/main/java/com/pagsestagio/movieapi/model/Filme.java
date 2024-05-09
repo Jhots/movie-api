@@ -24,7 +24,6 @@ public class Filme {
 
     private UUID idPublico;
 
-    @Column(nullable = false)
     private String nome;
 
     public Integer getId() {

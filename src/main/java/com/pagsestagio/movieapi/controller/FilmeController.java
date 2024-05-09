@@ -67,8 +67,8 @@ public class FilmeController {
         FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.deletarFilmePeloId(idpublico);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
-        if(retornoService.mensagemStatus() == null){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.idpublico(), retornoService.nomeFilme(), null));
+        if(retornoService.mensagemStatus().equals("Filme excluído com sucesso!")){
+            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
         } else {
             respostaRequisicao = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
         }
