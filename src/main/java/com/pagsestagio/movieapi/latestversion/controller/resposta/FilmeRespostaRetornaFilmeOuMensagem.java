@@ -1,4 +1,4 @@
-package com.pagsestagio.movieapi.controller.resposta;
+package com.pagsestagio.movieapi.latestversion.controller.resposta;
 
 
 import java.util.UUID;

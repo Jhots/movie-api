@@ -1,11 +1,12 @@
-package com.pagsestagio.movieapi.service;
+package com.pagsestagio.movieapi.latestversion.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.pagsestagio.movieapi.model.Filme;
-import com.pagsestagio.movieapi.model.FilmeDTO;
-import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
-import com.pagsestagio.movieapi.repository.FilmeRepository;
+import com.pagsestagio.movieapi.latestversion.model.Filme;
+import com.pagsestagio.movieapi.latestversion.model.FilmeDTO;
+import com.pagsestagio.movieapi.latestversion.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
+import com.pagsestagio.movieapi.latestversion.repository.FilmeRepository;
+import com.pagsestagio.movieapi.latestversion.service.FilmeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;

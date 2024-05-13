@@ -1,9 +1,9 @@
-package com.pagsestagio.movieapi.service;
+package com.pagsestagio.movieapi.latestversion.service;
 
-import com.pagsestagio.movieapi.model.Filme;
-import com.pagsestagio.movieapi.model.FilmeDTO;
-import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
-import com.pagsestagio.movieapi.repository.FilmeRepository;
+import com.pagsestagio.movieapi.latestversion.model.Filme;
+import com.pagsestagio.movieapi.latestversion.model.FilmeDTO;
+import com.pagsestagio.movieapi.latestversion.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
+import com.pagsestagio.movieapi.latestversion.repository.FilmeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

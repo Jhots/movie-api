@@ -1,4 +1,4 @@
-package com.pagsestagio.movieapi.model;
+package com.pagsestagio.movieapi.latestversion.model;
 
 import java.util.UUID;
 

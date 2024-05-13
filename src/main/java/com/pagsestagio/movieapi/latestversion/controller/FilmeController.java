@@ -1,10 +1,10 @@
-package com.pagsestagio.movieapi.controller;
+package com.pagsestagio.movieapi.latestversion.controller;
 
-import com.pagsestagio.movieapi.controller.resposta.FilmeResposta;
-import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaRetornaFilmeOuMensagem;
-import com.pagsestagio.movieapi.model.FilmeDTO;
-import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
-import com.pagsestagio.movieapi.service.FilmeService;
+import com.pagsestagio.movieapi.latestversion.controller.resposta.FilmeResposta;
+import com.pagsestagio.movieapi.latestversion.controller.resposta.FilmeRespostaRetornaFilmeOuMensagem;
+import com.pagsestagio.movieapi.latestversion.model.FilmeDTO;
+import com.pagsestagio.movieapi.latestversion.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
+import com.pagsestagio.movieapi.latestversion.service.FilmeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/filmes")
+@RequestMapping("latestversion/filmes")
 public class FilmeController {
 
     private final FilmeService filmeService;
