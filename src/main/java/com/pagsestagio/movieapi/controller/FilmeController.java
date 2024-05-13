@@ -24,9 +24,9 @@ public class FilmeController {
         this.filmeService = filmeService;
     }
 
-    @GetMapping("/{idpublico}")
-    public ResponseEntity<FilmeResposta> pegarFilmePeloId(@PathVariable UUID idpublico){
-        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.pegarFilmePeloId(idpublico);
+    @GetMapping("/{idPublico}")
+    public ResponseEntity<FilmeResposta> pegarFilmePeloId(@PathVariable UUID idPublico){
+        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.pegarFilmePeloId(idPublico);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
         if (retornoService.mensagemStatus() == null){
@@ -62,9 +62,9 @@ public class FilmeController {
         return respostaRequisicao;
     }
 
-    @DeleteMapping("/{idpublico}")
-    public ResponseEntity<FilmeResposta> deletarFilmePeloId(@PathVariable UUID idpublico){
-        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.deletarFilmePeloId(idpublico);
+    @DeleteMapping("/{idPublico}")
+    public ResponseEntity<FilmeResposta> deletarFilmePeloId(@PathVariable UUID idPublico){
+        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.deletarFilmePeloId(idPublico);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
         if(retornoService.mensagemStatus().equals("Filme excluído com sucesso!")){

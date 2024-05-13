@@ -36,6 +36,7 @@ public class FilmeService {
         return retornoDoFilmePorIdentificador;
     }
 
+    @Transactional
     public FilmeResultadoRetornaFilmeOuMensagem criarFilme(FilmeDTO filmeRequisicao) {
         FilmeResultadoRetornaFilmeOuMensagem retornoCriacaoDeFilme = null;
 
@@ -56,6 +57,7 @@ public class FilmeService {
 
     }
 
+    @Transactional
     public FilmeResultadoRetornaFilmeOuMensagem atualizarFilme(FilmeDTO filmeRequisicao) {
         FilmeResultadoRetornaFilmeOuMensagem retornoAtualizacaoFilme = null;
         Optional<Filme> filmeExistente = filmeRepository.findByIdPublico(filmeRequisicao.idPublico());

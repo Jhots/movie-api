@@ -1,12 +1,18 @@
 package com.pagsestagio.movieapi.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.util.Objects;
 import java.util.UUID;
 
 
 @Entity
+@Table(name = "MOVIE")
 public class Filme {
     public Filme(Integer id, UUID idPublico, String nome) {
         this.id = id;
@@ -20,10 +26,13 @@ public class Filme {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Integer id;
 
+    @Column(name = "PUBLIC_ID")
     private UUID idPublico;
 
+    @Column(name = "NAME")
     private String nome;
 
     public Integer getId() {
