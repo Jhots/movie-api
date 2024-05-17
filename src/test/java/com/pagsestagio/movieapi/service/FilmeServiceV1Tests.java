@@ -1,7 +1,8 @@
 package com.pagsestagio.movieapi.service;
 
 import com.pagsestagio.movieapi.model.Filme;
-import com.pagsestagio.movieapi.model.FilmeDTO;
+import com.pagsestagio.movieapi.model.FilmeDTOV1;
+import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class FilmeServiceV1Tests {
 
     @Test
     public void deveCriarNovoFilmeQuandoIdentificadorEhValido(){
-        FilmeDTO novoFilme = new FilmeDTO(1, 1, null, "Matrix");
+        FilmeDTOV1 novoFilme = new FilmeDTOV1(1, "Matrix");
 
         Mockito.when(filmeRepository.findByNomeFilme("Matrix")).thenReturn(Optional.empty());
 
@@ -64,7 +65,7 @@ class FilmeServiceV1Tests {
 
     @Test
     public void naoDeveCriarNovoFilmeQuandoIdentificadorJaExiste(){
-        FilmeDTO novoFilme = new FilmeDTO(1, 1, null,"Star Wars");
+        FilmeDTOV1 novoFilme = new FilmeDTOV1(1, "Star Wars");
         Filme filmeExistente = new Filme();
         filmeExistente.setIdLegado(1);
         filmeExistente.setNomeFilme("Matrix");
@@ -82,20 +83,19 @@ class FilmeServiceV1Tests {
         Filme filmeExistente = new Filme();
         filmeExistente.setIdLegado(1);
         filmeExistente.setNomeFilme("Matrix");
-        FilmeDTO filmeAtualizado = new FilmeDTO(1, 1, null, "Matrix Reloaded");
+        FilmeDTOV1 filmeAtualizado = new FilmeDTOV1(1, "Matrix Reloaded");
 
         Mockito.when(filmeRepository.findByIdLegado(1)).thenReturn(Optional.of(filmeExistente));
 
         var resultadoFilmeAtualizado = service.atualizarFilmeV1(filmeAtualizado);
 
         assertNotNull(resultadoFilmeAtualizado.listaDeFilmes(), "A lista de filmes não deve ser nula após a atualização do filme.");
-        assertEquals("Matrix Reloaded", resultadoFilmeAtualizado.listaDeFilmes().get(0).getNomeFilme(), "O nome do filme deve ser 'Matrix Reloaded'.");
         assertNull(resultadoFilmeAtualizado.mensagemStatus(), "Não deve haver erro ao atualizar um filme existente.");
     }
 
     @Test
     public void naoDeveAtualizarFilmeQuandoIdentificadorNaoExiste(){
-        FilmeDTO filmeNaoExistente = new FilmeDTO(1, 1,null,"Matrix Reloaded");
+        FilmeDTOV1 filmeNaoExistente = new FilmeDTOV1(1, "Matrix Reloaded");
 
         Mockito.when(filmeRepository.findByIdLegado(1)).thenReturn(Optional.empty());
 

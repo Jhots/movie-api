@@ -3,7 +3,8 @@ package com.pagsestagio.movieapi.controller;
 import com.pagsestagio.movieapi.controller.resposta.FilmeResposta;
 import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaRetornaListaDeFilmesOuExcecaoV1;
-import com.pagsestagio.movieapi.model.FilmeDTO;
+import com.pagsestagio.movieapi.model.FilmeDTOV1;
+import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaListaDeFilmesOuExcecaoV1;
 import com.pagsestagio.movieapi.service.FilmeService;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Deprecated
 @RestController
-@RequestMapping("v1/filmes")
+@RequestMapping("/filmes")
 public class FilmeControllerV1 {
 
     private final FilmeService filmeService;
@@ -45,7 +46,7 @@ public class FilmeControllerV1 {
     }
 
     @PostMapping
-    public ResponseEntity<FilmeResposta> criarFilme(@RequestBody FilmeDTO filme) {
+    public ResponseEntity<FilmeResposta> criarFilme(@RequestBody FilmeDTOV1 filme) {
         FilmeResultadoRetornaListaDeFilmesOuExcecaoV1 retornoService = filmeService.criarFilmeV1(filme);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
@@ -58,7 +59,7 @@ public class FilmeControllerV1 {
     }
 
     @PutMapping
-    public ResponseEntity<FilmeResposta> atualizarFilme(@RequestBody FilmeDTO filme) {
+    public ResponseEntity<FilmeResposta> atualizarFilme(@RequestBody FilmeDTOV1 filme) {
         FilmeResultadoRetornaListaDeFilmesOuExcecaoV1 retornoService = filmeService.atualizarFilmeV1(filme);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
         if(retornoService.mensagemStatus() == null){

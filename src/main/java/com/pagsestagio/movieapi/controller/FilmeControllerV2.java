@@ -1,7 +1,7 @@
 package com.pagsestagio.movieapi.controller;
 
 import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaRetornaFilmeOuMensagem;
-import com.pagsestagio.movieapi.model.FilmeDTO;
+import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.service.FilmeService;
 import com.pagsestagio.movieapi.controller.resposta.FilmeResposta;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
@@ -38,7 +38,7 @@ public class FilmeControllerV2 {
     }
 
     @PostMapping
-    public ResponseEntity<FilmeResposta> criarFilme(@RequestBody FilmeDTO filme) {
+    public ResponseEntity<FilmeResposta> criarFilme(@RequestBody FilmeDTOV2 filme) {
         FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.criarFilmeV2(filme);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
@@ -51,7 +51,7 @@ public class FilmeControllerV2 {
     }
 
     @PutMapping
-    public ResponseEntity<FilmeResposta> atualizarFilme(@RequestBody FilmeDTO filme) {
+    public ResponseEntity<FilmeResposta> atualizarFilme(@RequestBody FilmeDTOV2 filme) {
         FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.atualizarFilmeV2(filme);
         ResponseEntity<FilmeResposta> respostaRequisicao = null;
         if(retornoService.mensagemStatus() == null){

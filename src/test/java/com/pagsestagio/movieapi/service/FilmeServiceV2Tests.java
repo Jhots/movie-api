@@ -3,10 +3,9 @@ package com.pagsestagio.movieapi.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.pagsestagio.movieapi.model.Filme;
-import com.pagsestagio.movieapi.model.FilmeDTO;
+import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
-import com.pagsestagio.movieapi.service.FilmeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -54,7 +53,7 @@ class FilmeServiceV2Tests {
 
     @Test
     public void deveCriarNovoFilmeQuandoIdentificadorEhValido(){
-        FilmeDTO novoFilme = new FilmeDTO(null, null, null,"Matrix");
+        FilmeDTOV2 novoFilme = new FilmeDTOV2(null, null, null,"Matrix");
 
         Mockito.when(filmeRepository.findByNomeFilme("Matrix")).thenReturn(Optional.empty());
 
@@ -67,7 +66,7 @@ class FilmeServiceV2Tests {
 
     @Test
     public void naoDeveCriarNovoFilmeQuandoIdentificadorJaExiste(){
-        FilmeDTO novoFilme = new FilmeDTO(null, null, null,"Matrix");
+        FilmeDTOV2 novoFilme = new FilmeDTOV2(null, null, null,"Matrix");
         Filme filmeExistente = new Filme();
         filmeExistente.setIdPublico(UUID.randomUUID());
         filmeExistente.setNomeFilme("Matrix");
@@ -84,7 +83,7 @@ class FilmeServiceV2Tests {
     @Test
     public void deveAtualizarFilmeExistenteQuandoIdentificadorEhValido(){
         UUID idPublico = UUID.randomUUID();
-        FilmeDTO filmeAtualizado = new FilmeDTO(null, null, idPublico, "Matrix Reloaded");
+        FilmeDTOV2 filmeAtualizado = new FilmeDTOV2(null, null, idPublico, "Matrix Reloaded");
         Filme filmeExistente = new Filme();
         filmeExistente.setIdPublico(idPublico);
         filmeExistente.setNomeFilme("Matrix");
@@ -102,7 +101,7 @@ class FilmeServiceV2Tests {
     @Test
     public void naoDeveAtualizarFilmeQuandoIdentificadorNaoExiste(){
         UUID idPublico = UUID.randomUUID();
-        FilmeDTO filmeNaoExistente = new FilmeDTO(null, null, idPublico, "Matrix Reloaded");
+        FilmeDTOV2 filmeNaoExistente = new FilmeDTOV2(null, null, idPublico, "Matrix Reloaded");
 
         Mockito.when(filmeRepository.findByIdPublico(idPublico)).thenReturn(Optional.empty());
 
