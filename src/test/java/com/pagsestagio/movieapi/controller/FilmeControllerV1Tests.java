@@ -21,193 +21,200 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class FilmeControllerV1Tests {
 
+  @Autowired private MockMvc mockMvc;
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired FilmeRepository filmeRepository;
 
-    @Autowired
-    FilmeRepository filmeRepository;
+  Filme filmeSomenteIdentificador = new Filme(null, 1, null, null);
+  Filme filmeSomenteNome = new Filme(null, null, null, "Avatar");
+  Filme filmeIdentificadorENomeUm = new Filme(null, 1, null, "Avatar");
+  Filme filmeIdentificadorENomeDois = new Filme(null, 1000, null, "Vingadores");
+  Filme filmeRepeticaoIdentificador = new Filme(null, 1, null, "Homem Aranha");
 
-    Filme filmeSomenteIdentificador = new Filme(null, 1, null,null);
-    Filme filmeSomenteNome = new Filme(null, null, null, "Avatar");
-    Filme filmeIdentificadorENomeUm = new Filme(null, 1, null, "Avatar");
-    Filme filmeIdentificadorENomeDois= new Filme(null,1000, null, "Vingadores");
-    Filme filmeRepeticaoIdentificador = new Filme(null, 1, null, "Homem Aranha");
+  @BeforeEach
+  public void setUp() throws Exception {
+    filmeRepository.deleteAll();
+  }
 
+  @Test
+  void deveRetornarBadRequestQuandoFilmeDaResquisicaoPossuiNomeNulo() throws Exception {
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        filmeRepository.deleteAll();
-    }
+    var requisicaoDeFilmeComNomeNulo =
+        post("/filmes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filmeSomenteIdentificador));
 
-    @Test
-    void deveRetornarBadRequestQuandoFilmeDaResquisicaoPossuiNomeNulo() throws Exception {
+    var resultadoRequisicao = mockMvc.perform(requisicaoDeFilmeComNomeNulo);
 
-        var requisicaoDeFilmeComNomeNulo = post("/filmes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeSomenteIdentificador));
+    resultadoRequisicao.andExpect(status().isBadRequest());
+  }
 
-        var resultadoRequisicao = mockMvc.perform(requisicaoDeFilmeComNomeNulo);
+  @Test
+  void deveRetornarBadRequestQuandoFilmeDaRequisicaoPossuiIdentificadorNulo() throws Exception {
 
-        resultadoRequisicao.andExpect(status().isBadRequest());
+    var requisicaoDeFilmeComIdentificadorNulo =
+        post("/filmes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filmeSomenteNome));
 
-    }
+    var resultadoRequisicao = mockMvc.perform(requisicaoDeFilmeComIdentificadorNulo);
 
-    @Test
-    void deveRetornarBadRequestQuandoFilmeDaRequisicaoPossuiIdentificadorNulo() throws Exception {
+    resultadoRequisicao.andExpect(status().isBadRequest());
+  }
 
-        var requisicaoDeFilmeComIdentificadorNulo = post("/filmes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeSomenteNome));
+  @Test
+  void deveRetornarOkQuandoFilmeDaRequisicaoPossuiIdentificadorENome() throws Exception {
 
-        var resultadoRequisicao = mockMvc.perform(requisicaoDeFilmeComIdentificadorNulo);
+    var requisicaoDeFilmeComIdentificadorENome =
+        post("/filmes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
 
-        resultadoRequisicao.andExpect(status().isBadRequest());
+    var resultadoRequisicao = mockMvc.perform(requisicaoDeFilmeComIdentificadorENome);
 
-    }
+    resultadoRequisicao.andExpect(status().isOk());
+  }
 
-    @Test
-    void deveRetornarOkQuandoFilmeDaRequisicaoPossuiIdentificadorENome() throws Exception {
+  @Test
+  void deveRetornarBadRequestQuandoFilmeDaRequisicaoPossuiIdentificadorJaExistente()
+      throws Exception {
 
-        var requisicaoDeFilmeComIdentificadorENome = post("/filmes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
+    Filme filmeNoBanco = new Filme();
+    filmeNoBanco.setIdLegado(1);
+    filmeNoBanco.setNomeFilme("Avatar");
+    filmeRepository.save(filmeNoBanco);
 
-        var resultadoRequisicao = mockMvc.perform(requisicaoDeFilmeComIdentificadorENome);
+    var requisicaoDeFilmeComIdentificadorJaExistente =
+        post("/filmes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filmeNoBanco));
 
-        resultadoRequisicao.andExpect(status().isOk());
+    var resultadorequisicaoDeFilmeComIdentificadorJaExistente =
+        mockMvc.perform(requisicaoDeFilmeComIdentificadorJaExistente);
 
-    }
+    resultadorequisicaoDeFilmeComIdentificadorJaExistente.andExpect(status().isBadRequest());
+  }
 
-    @Test
-    void deveRetornarBadRequestQuandoFilmeDaRequisicaoPossuiIdentificadorJaExistente() throws Exception {
+  @Test
+  void deveRetornarOkQuandoRequisicaoSolicitarUmIdentificadorCadastrado() throws Exception {
 
-        Filme filmeNoBanco = new Filme();
-        filmeNoBanco.setIdLegado(1);
-        filmeNoBanco.setNomeFilme("Avatar");
-        filmeRepository.save(filmeNoBanco);
+    Filme filmeNoBanco = new Filme();
+    filmeNoBanco.setIdLegado(1);
+    filmeNoBanco.setNomeFilme("Avatar");
+    filmeRepository.save(filmeNoBanco);
 
-        var requisicaoDeFilmeComIdentificadorJaExistente = post("/filmes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeNoBanco));
+    var requisicaoDeFilmeAtravesDeIdentificador = get("/filmes/1");
 
-        var resultadorequisicaoDeFilmeComIdentificadorJaExistente = mockMvc.perform(requisicaoDeFilmeComIdentificadorJaExistente);
+    var resultadoRequisicaoDeFilmeAtravesDeIdentificador =
+        mockMvc.perform(requisicaoDeFilmeAtravesDeIdentificador);
 
-        resultadorequisicaoDeFilmeComIdentificadorJaExistente.andExpect(status().isBadRequest());
+    resultadoRequisicaoDeFilmeAtravesDeIdentificador.andExpect(status().isOk());
+  }
 
-    }
+  @Test
+  void deveRetornarNotFoundQuandoRequisicaoSolicitarUmIdentificadorNaoCadastrado()
+      throws Exception {
 
-    @Test
-    void deveRetornarOkQuandoRequisicaoSolicitarUmIdentificadorCadastrado() throws Exception {
+    var requisicaoDeFilmeAtravesDeIdentificadorNaoExistente = get("/v1/filmes/1000");
 
-        Filme filmeNoBanco = new Filme();
-        filmeNoBanco.setIdLegado(1);
-        filmeNoBanco.setNomeFilme("Avatar");
-        filmeRepository.save(filmeNoBanco);
+    var resultadoRequisicaoDeFilmeAtravesDeIdentificadorNaoExistente =
+        mockMvc.perform(requisicaoDeFilmeAtravesDeIdentificadorNaoExistente);
 
-        var requisicaoDeFilmeAtravesDeIdentificador = get("/filmes/1");
+    resultadoRequisicaoDeFilmeAtravesDeIdentificadorNaoExistente.andExpect(status().isNotFound());
+  }
 
-        var resultadoRequisicaoDeFilmeAtravesDeIdentificador = mockMvc.perform(requisicaoDeFilmeAtravesDeIdentificador);
+  @Test
+  void deveRetornarOkQuandoRequisicaoSolicitarDeletarUmIdentificadorCadastrado() throws Exception {
 
-        resultadoRequisicaoDeFilmeAtravesDeIdentificador.andExpect(status().isOk());
+    Filme filmeNoBanco = new Filme();
+    filmeNoBanco.setIdLegado(1);
+    filmeNoBanco.setNomeFilme("Avatar");
+    filmeRepository.save(filmeNoBanco);
 
-    }
+    var requisicaoDeFilmeAtravesDeIdentificador = delete("/filmes/1");
 
-    @Test
-    void deveRetornarNotFoundQuandoRequisicaoSolicitarUmIdentificadorNaoCadastrado() throws Exception {
+    var resultadoRequisicaoDeFilmeAtravesDeIdentificador =
+        mockMvc.perform(requisicaoDeFilmeAtravesDeIdentificador);
 
-        var requisicaoDeFilmeAtravesDeIdentificadorNaoExistente = get("/v1/filmes/1000");
+    resultadoRequisicaoDeFilmeAtravesDeIdentificador.andExpect(status().isOk());
+  }
 
-        var resultadoRequisicaoDeFilmeAtravesDeIdentificadorNaoExistente = mockMvc.perform(requisicaoDeFilmeAtravesDeIdentificadorNaoExistente);
+  @Test
+  void deveRetornarNotFoundQuandoRequisicaoSolicitarDeletarUmIdentificadorNaoCadastrado()
+      throws Exception {
 
-        resultadoRequisicaoDeFilmeAtravesDeIdentificadorNaoExistente.andExpect(status().isNotFound());
+    var requisicaoDeFilmeAtravesDeIdentificadorNaoExistente = delete("/filmes/1000");
 
-    }
+    var resultadoRequisicaoDeFilmeAtravesDeIdentificadorNaoExistente =
+        mockMvc.perform(requisicaoDeFilmeAtravesDeIdentificadorNaoExistente);
 
-    @Test
-    void deveRetornarOkQuandoRequisicaoSolicitarDeletarUmIdentificadorCadastrado() throws Exception {
+    resultadoRequisicaoDeFilmeAtravesDeIdentificadorNaoExistente.andExpect(status().isNotFound());
+  }
 
-        Filme filmeNoBanco = new Filme();
-        filmeNoBanco.setIdLegado(1);
-        filmeNoBanco.setNomeFilme("Avatar");
-        filmeRepository.save(filmeNoBanco);
+  @Test
+  void deveRetornarBadRequestQuandoRequsicaoTentarAtualizarFilmeSomenteComNomeNulo()
+      throws Exception {
 
-        var requisicaoDeFilmeAtravesDeIdentificador = delete("/filmes/1");
+    var requisicaoDeFilmeComNomeNulo =
+        put("/filmes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filmeSomenteIdentificador));
 
-        var resultadoRequisicaoDeFilmeAtravesDeIdentificador = mockMvc.perform(requisicaoDeFilmeAtravesDeIdentificador);
+    var resultadoRequisicaoDeFilmeComNomeNulo = mockMvc.perform(requisicaoDeFilmeComNomeNulo);
 
-        resultadoRequisicaoDeFilmeAtravesDeIdentificador.andExpect(status().isOk());
+    resultadoRequisicaoDeFilmeComNomeNulo.andExpect(status().isBadRequest());
+  }
 
-    }
+  @Test
+  void deveRetornarBadRequestQuandoRequisicaoTentarAtualizarFilmeSomenteComIdentificadorNulo()
+      throws Exception {
 
-    @Test
-    void deveRetornarNotFoundQuandoRequisicaoSolicitarDeletarUmIdentificadorNaoCadastrado() throws Exception {
+    var requisicaoDeFilmeComIdentificadorNulo =
+        put("/filmes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filmeSomenteNome));
 
-        var requisicaoDeFilmeAtravesDeIdentificadorNaoExistente = delete("/filmes/1000");
+    var resultadoRequisicaoDeFilmeComIdentificadorNulo =
+        mockMvc.perform(requisicaoDeFilmeComIdentificadorNulo);
 
-        var resultadoRequisicaoDeFilmeAtravesDeIdentificadorNaoExistente = mockMvc.perform(requisicaoDeFilmeAtravesDeIdentificadorNaoExistente);
+    resultadoRequisicaoDeFilmeComIdentificadorNulo.andExpect(status().isBadRequest());
+  }
 
-        resultadoRequisicaoDeFilmeAtravesDeIdentificadorNaoExistente.andExpect(status().isNotFound());
+  @Test
+  void deveRetornarOkQuandoRequisicaoTentarAtualizarFilmeComUmIdentificadorExistenteENomeFilme()
+      throws Exception {
 
-    }
+    Filme filmeNoBanco = new Filme();
+    filmeNoBanco.setIdLegado(1);
+    filmeNoBanco.setNomeFilme("Avatar");
+    filmeRepository.save(filmeNoBanco);
 
-    @Test
-    void deveRetornarBadRequestQuandoRequsicaoTentarAtualizarFilmeSomenteComNomeNulo() throws Exception {
+    var requisicaoDeFilmeComIdentificadorJaExistente =
+        put("/filmes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filmeRepeticaoIdentificador));
 
-        var requisicaoDeFilmeComNomeNulo = put("/filmes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeSomenteIdentificador));
+    var resultadoRequisicaoDeFilmeComIdentificadorJaExistente =
+        mockMvc.perform(requisicaoDeFilmeComIdentificadorJaExistente);
 
-        var resultadoRequisicaoDeFilmeComNomeNulo = mockMvc.perform(requisicaoDeFilmeComNomeNulo);
+    resultadoRequisicaoDeFilmeComIdentificadorJaExistente.andExpect(status().isOk());
+  }
 
-        resultadoRequisicaoDeFilmeComNomeNulo.andExpect(status().isBadRequest());
-    }
+  @Test
+  void
+      deveRetornarBadRequestQuandoRequisicaoTentarAtualizarComIdentificadorNaoPresenteNaListaDeFilmes()
+          throws Exception {
 
-    @Test
-    void deveRetornarBadRequestQuandoRequisicaoTentarAtualizarFilmeSomenteComIdentificadorNulo() throws Exception {
+    var requisicaoDeFilmeComIdentificadorNaoPresenteNaLista =
+        put("/filmes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(filmeIdentificadorENomeDois));
 
-        var requisicaoDeFilmeComIdentificadorNulo = put("/filmes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeSomenteNome));
+    var resultadoRequisicaoDeFilmeComIdentificadorNaoPresenteNaLista =
+        mockMvc.perform(requisicaoDeFilmeComIdentificadorNaoPresenteNaLista);
 
-        var resultadoRequisicaoDeFilmeComIdentificadorNulo = mockMvc.perform(requisicaoDeFilmeComIdentificadorNulo);
-
-        resultadoRequisicaoDeFilmeComIdentificadorNulo.andExpect(status().isBadRequest());
-
-    }
-
-    @Test
-    void deveRetornarOkQuandoRequisicaoTentarAtualizarFilmeComUmIdentificadorExistenteENomeFilme() throws Exception {
-
-        Filme filmeNoBanco = new Filme();
-        filmeNoBanco.setIdLegado(1);
-        filmeNoBanco.setNomeFilme("Avatar");
-        filmeRepository.save(filmeNoBanco);
-
-        var requisicaoDeFilmeComIdentificadorJaExistente = put("/filmes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeRepeticaoIdentificador));
-
-        var resultadoRequisicaoDeFilmeComIdentificadorJaExistente = mockMvc.perform(requisicaoDeFilmeComIdentificadorJaExistente);
-
-        resultadoRequisicaoDeFilmeComIdentificadorJaExistente.andExpect(status().isOk());
-
-    }
-
-    @Test
-    void deveRetornarBadRequestQuandoRequisicaoTentarAtualizarComIdentificadorNaoPresenteNaListaDeFilmes() throws Exception {
-
-        var requisicaoDeFilmeComIdentificadorNaoPresenteNaLista = put("/filmes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(filmeIdentificadorENomeDois));
-
-        var resultadoRequisicaoDeFilmeComIdentificadorNaoPresenteNaLista = mockMvc.perform(requisicaoDeFilmeComIdentificadorNaoPresenteNaLista);
-
-        resultadoRequisicaoDeFilmeComIdentificadorNaoPresenteNaLista.andExpect(status().isBadRequest());
-
-    }
-
+    resultadoRequisicaoDeFilmeComIdentificadorNaoPresenteNaLista.andExpect(status().isBadRequest());
+  }
 }

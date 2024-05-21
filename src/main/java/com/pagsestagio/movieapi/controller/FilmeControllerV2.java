@@ -19,67 +19,99 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-
 @RestController
 @RequestMapping("v2/filmes")
 public class FilmeControllerV2 {
 
-    private final FilmeService filmeService;
+  private final FilmeService filmeService;
 
-    @Autowired
-    public FilmeControllerV2(FilmeService filmeService){
-        this.filmeService = filmeService;
+  @Autowired
+  public FilmeControllerV2(FilmeService filmeService) {
+    this.filmeService = filmeService;
+  }
+
+  @GetMapping("/{idPublico}")
+  public ResponseEntity<FilmeResposta> pegarFilmePeloId(@PathVariable UUID idPublico) {
+    FilmeResultadoRetornaFilmeOuMensagem retornoService =
+        filmeService.pegarFilmePeloIdV2(idPublico);
+    ResponseEntity<FilmeResposta> respostaRequisicao = null;
+
+    if (retornoService.mensagemStatus() == null) {
+      respostaRequisicao =
+          ResponseEntity.ok()
+              .body(
+                  new FilmeRespostaRetornaFilmeOuMensagem(
+                      retornoService.idpublico(), retornoService.nomeFilme(), null));
+    } else {
+      respostaRequisicao =
+          ResponseEntity.status(HttpStatus.NOT_FOUND)
+              .body(
+                  new FilmeRespostaRetornaFilmeOuMensagem(
+                      null, null, retornoService.mensagemStatus()));
     }
+    return respostaRequisicao;
+  }
 
-    @GetMapping("/{idPublico}")
-    public ResponseEntity<FilmeResposta> pegarFilmePeloId(@PathVariable UUID idPublico){
-        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.pegarFilmePeloIdV2(idPublico);
-        ResponseEntity<FilmeResposta> respostaRequisicao = null;
+  @PostMapping
+  public ResponseEntity<FilmeResposta> criarFilme(@RequestBody FilmeDTOV2 filme) {
+    FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.criarFilmeV2(filme);
+    ResponseEntity<FilmeResposta> respostaRequisicao = null;
 
-        if (retornoService.mensagemStatus() == null){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.idpublico(), retornoService.nomeFilme(), null));
-        } else {
-            respostaRequisicao = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
-        }
-        return respostaRequisicao;
+    if (retornoService.mensagemStatus() == null) {
+      respostaRequisicao =
+          ResponseEntity.ok()
+              .body(
+                  new FilmeRespostaRetornaFilmeOuMensagem(
+                      retornoService.idpublico(), retornoService.nomeFilme(), null));
+    } else {
+      respostaRequisicao =
+          ResponseEntity.badRequest()
+              .body(
+                  new FilmeRespostaRetornaFilmeOuMensagem(
+                      null, null, retornoService.mensagemStatus()));
     }
+    return respostaRequisicao;
+  }
 
-    @PostMapping
-    public ResponseEntity<FilmeResposta> criarFilme(@RequestBody FilmeDTOV2 filme) {
-        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.criarFilmeV2(filme);
-        ResponseEntity<FilmeResposta> respostaRequisicao = null;
-
-        if(retornoService.mensagemStatus() == null){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.idpublico(), retornoService.nomeFilme(), null));
-        } else {
-            respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
-        }
-        return respostaRequisicao;
+  @PutMapping
+  public ResponseEntity<FilmeResposta> atualizarFilme(@RequestBody FilmeDTOV2 filme) {
+    FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.atualizarFilmeV2(filme);
+    ResponseEntity<FilmeResposta> respostaRequisicao = null;
+    if (retornoService.mensagemStatus() == null) {
+      respostaRequisicao =
+          ResponseEntity.ok()
+              .body(
+                  new FilmeRespostaRetornaFilmeOuMensagem(
+                      retornoService.idpublico(), retornoService.nomeFilme(), null));
+    } else {
+      respostaRequisicao =
+          ResponseEntity.badRequest()
+              .body(
+                  new FilmeRespostaRetornaFilmeOuMensagem(
+                      null, null, retornoService.mensagemStatus()));
     }
+    return respostaRequisicao;
+  }
 
-    @PutMapping
-    public ResponseEntity<FilmeResposta> atualizarFilme(@RequestBody FilmeDTOV2 filme) {
-        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.atualizarFilmeV2(filme);
-        ResponseEntity<FilmeResposta> respostaRequisicao = null;
-        if(retornoService.mensagemStatus() == null){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.idpublico(), retornoService.nomeFilme(), null));
-        } else {
-            respostaRequisicao = ResponseEntity.badRequest().body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
-        }
-        return respostaRequisicao;
+  @DeleteMapping("/{idPublico}")
+  public ResponseEntity<FilmeResposta> deletarFilmePeloId(@PathVariable UUID idPublico) {
+    FilmeResultadoRetornaFilmeOuMensagem retornoService =
+        filmeService.deletarFilmePeloIdV2(idPublico);
+    ResponseEntity<FilmeResposta> respostaRequisicao = null;
+
+    if (retornoService.mensagemStatus().equals("Filme excluído com sucesso!")) {
+      respostaRequisicao =
+          ResponseEntity.ok()
+              .body(
+                  new FilmeRespostaRetornaFilmeOuMensagem(
+                      null, null, retornoService.mensagemStatus()));
+    } else {
+      respostaRequisicao =
+          ResponseEntity.status(HttpStatus.NOT_FOUND)
+              .body(
+                  new FilmeRespostaRetornaFilmeOuMensagem(
+                      null, null, retornoService.mensagemStatus()));
     }
-
-    @DeleteMapping("/{idPublico}")
-    public ResponseEntity<FilmeResposta> deletarFilmePeloId(@PathVariable UUID idPublico){
-        FilmeResultadoRetornaFilmeOuMensagem retornoService = filmeService.deletarFilmePeloIdV2(idPublico);
-        ResponseEntity<FilmeResposta> respostaRequisicao = null;
-
-        if(retornoService.mensagemStatus().equals("Filme excluído com sucesso!")){
-            respostaRequisicao = ResponseEntity.ok().body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
-        } else {
-            respostaRequisicao = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new FilmeRespostaRetornaFilmeOuMensagem(null, null, retornoService.mensagemStatus()));
-        }
-        return respostaRequisicao;
-    }
-
+    return respostaRequisicao;
+  }
 }

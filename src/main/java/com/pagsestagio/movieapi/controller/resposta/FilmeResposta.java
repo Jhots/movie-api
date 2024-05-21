@@ -1,4 +1,3 @@
 package com.pagsestagio.movieapi.controller.resposta;
 
-public interface FilmeResposta {
-}
+public interface FilmeResposta {}

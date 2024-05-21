@@ -10,18 +10,18 @@ import java.util.UUID;
 
 @Repository
 public interface FilmeRepository extends JpaRepository<Filme, Integer> {
-    Optional<Filme> findByNomeFilme(String nome);
+  Optional<Filme> findByNomeFilme(String nome);
 
-    Optional<Filme> findByIdPublico(UUID idPublico);
+  Optional<Filme> findByIdPublico(UUID idPublico);
 
-    @Deprecated
-    Optional<Filme> findByIdLegado(Integer idLegado);
+  @Deprecated
+  Optional<Filme> findByIdLegado(Integer idLegado);
 
-    void deleteByIdLegado(Integer idLegado);
+  void deleteByIdLegado(Integer idLegado);
 
-    void deleteByIdPublico(UUID idPublico);
+  void deleteByIdPublico(UUID idPublico);
 
-    boolean existsByIdLegado(Integer idLegado);
+  boolean existsByIdLegado(Integer idLegado);
 
-    List<Filme> findAllByIdLegadoIsNotNull();
+  List<Filme> findAllByIdLegadoIsNotNull();
 }
