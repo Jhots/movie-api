@@ -28,15 +28,19 @@ public class FilmeService {
         this.filmeRepository = filmeRepository;
     }
 
-    List<FilmeDTOV1> listaDeFilmes = new ArrayList<>();
 
-    public static List<Filme> converterFilmeParaListaDeFilmes(Filme filme) {
-        List<Filme> listaDeFilmes = new ArrayList<>();
-        if (filme != null) {
-            listaDeFilmes.add(filme);
+    List<FilmeDTOV1> getListaDeFilmesVersaoUm(){
+        List<Filme> filmesComIdLegado = filmeRepository.findAllByIdLegadoIsNotNull();
+        List<FilmeDTOV1> listaDeFilmes = new ArrayList<>();
+
+        for (Filme filme : filmesComIdLegado){
+            FilmeDTOV1 filmeLegadoDTOV1 = new FilmeDTOV1(filme.getIdLegado(), filme.getNomeFilme());
+            listaDeFilmes.add(filmeLegadoDTOV1);
         }
+
         return listaDeFilmes;
     }
+
 
     @Deprecated
     public FilmeResultadoRetornaFilmeOuExcecaoV1 pegarFilmePeloIdV1(Integer idRequisicao){
@@ -86,8 +90,7 @@ public class FilmeService {
             filmecriado.setNomeFilme(filmeRequisicao.getNomeFilme());
             filmeRepository.save(filmecriado);
 
-
-            listaDeFilmes.add(filmeRequisicao);
+            List<FilmeDTOV1> listaDeFilmes = getListaDeFilmesVersaoUm();
 
             retornoCriacaoDeFilme = new FilmeResultadoRetornaListaDeFilmesOuExcecaoV1(listaDeFilmes, null);
         }
@@ -95,7 +98,6 @@ public class FilmeService {
         return retornoCriacaoDeFilme;
 
     }
-
 
 
     @Transactional
@@ -132,12 +134,7 @@ public class FilmeService {
             filmeAtualizado.setNomeFilme(filmeRequisicao.getNomeFilme());
             filmeRepository.save(filmeAtualizado);
 
-            for (FilmeDTOV1 filme : listaDeFilmes) {
-                if (filme.getIdLegado().equals(filmeRequisicao.getIdLegado())) {
-                    filme.setNomeFilme(filmeRequisicao.getNomeFilme());
-                    break;
-                }
-            }
+            List<FilmeDTOV1> listaDeFilmes = getListaDeFilmesVersaoUm();
 
             retornoAtualizacaoFilme = new FilmeResultadoRetornaListaDeFilmesOuExcecaoV1(listaDeFilmes, null);
         } else if (filmeRequisicao.getNomeFilme() == null || filmeRequisicao.getIdLegado() == null) {
@@ -182,12 +179,7 @@ public class FilmeService {
         if(optionalFilme.isPresent()){
             filmeRepository.deleteByIdLegado(idRequisicao);
 
-            for (FilmeDTOV1 filme : listaDeFilmes) {
-                if (Objects.equals(filme.getIdLegado(), idRequisicao)) {
-                    listaDeFilmes.remove(filme);
-                    break;
-                }
-            }
+            List<FilmeDTOV1> listaDeFilmes = getListaDeFilmesVersaoUm();
 
             retornoDeletarFilme = new FilmeResultadoRetornaListaDeFilmesOuExcecaoV1(listaDeFilmes, null);
         } else {

@@ -79,19 +79,23 @@ class FilmeServiceV1Tests {
     }
 
     @Test
-    public void deveAtualizarFilmeExistenteQuandoIdentificadorEhValido(){
+    public void deveAtualizarFilmeExistenteQuandoIdentificadorEhValido() {
         Filme filmeExistente = new Filme();
         filmeExistente.setIdLegado(1);
         filmeExistente.setNomeFilme("Matrix");
         FilmeDTOV1 filmeAtualizado = new FilmeDTOV1(1, "Matrix Reloaded");
 
         Mockito.when(filmeRepository.findByIdLegado(1)).thenReturn(Optional.of(filmeExistente));
+        Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(filmeExistente);
 
         var resultadoFilmeAtualizado = service.atualizarFilmeV1(filmeAtualizado);
 
         assertNotNull(resultadoFilmeAtualizado.listaDeFilmes(), "A lista de filmes não deve ser nula após a atualização do filme.");
+        assertEquals("Matrix Reloaded", resultadoFilmeAtualizado.listaDeFilmes().get(0).getNomeFilme(), "O nome do filme deve ser 'Matrix Reloaded'.");
         assertNull(resultadoFilmeAtualizado.mensagemStatus(), "Não deve haver erro ao atualizar um filme existente.");
     }
+
+
 
     @Test
     public void naoDeveAtualizarFilmeQuandoIdentificadorNaoExiste(){
