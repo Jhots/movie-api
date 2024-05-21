@@ -1,8 +1,6 @@
 package com.pagsestagio.movieapi.repository;
 
 import com.pagsestagio.movieapi.model.Filme;
-import com.pagsestagio.movieapi.model.FilmeDTOV1;
-import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

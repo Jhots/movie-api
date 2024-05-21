@@ -2,7 +2,6 @@ package com.pagsestagio.movieapi.service;
 
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV1;
-import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
 import org.junit.jupiter.api.Test;
@@ -10,13 +9,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 @ExtendWith(MockitoExtension.class)
 class FilmeServiceV1Tests {
@@ -51,16 +51,24 @@ class FilmeServiceV1Tests {
     }
 
     @Test
-    public void deveCriarNovoFilmeQuandoIdentificadorEhValido(){
+    public void deveCriarNovoFilmeQuandoIdentificadorEhValido() {
         FilmeDTOV1 novoFilme = new FilmeDTOV1(1, "Matrix");
 
         Mockito.when(filmeRepository.findByNomeFilme("Matrix")).thenReturn(Optional.empty());
+        Mockito.when(filmeRepository.existsByIdLegado(1)).thenReturn(false);
+
+        Filme filmeCriado = new Filme();
+        filmeCriado.setIdLegado(1);
+        filmeCriado.setNomeFilme("Matrix");
+        Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(filmeCriado);
+        Mockito.when(filmeRepository.findAllByIdLegadoIsNotNull()).thenReturn(Collections.singletonList(filmeCriado));
 
         var resultadoFilmeCriado = service.criarFilmeV1(novoFilme);
 
         assertNotNull(resultadoFilmeCriado.listaDeFilmes(), "A lista de filmes não deve ser nula após a criação de um novo filme.");
         assertEquals(1, resultadoFilmeCriado.listaDeFilmes().size(), "A lista de filmes deve conter exatamente um filme.");
         assertNull(resultadoFilmeCriado.mensagemStatus(), "Não deve haver erro ao criar um novo filme com identificador válido.");
+        assertEquals("Matrix", resultadoFilmeCriado.listaDeFilmes().get(0).getNomeFilme(), "O nome do filme retornado deve ser 'Matrix'.");
     }
 
     @Test
@@ -85,8 +93,10 @@ class FilmeServiceV1Tests {
         filmeExistente.setNomeFilme("Matrix");
         FilmeDTOV1 filmeAtualizado = new FilmeDTOV1(1, "Matrix Reloaded");
 
+
         Mockito.when(filmeRepository.findByIdLegado(1)).thenReturn(Optional.of(filmeExistente));
-        Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(filmeExistente);
+        Mockito.when(filmeRepository.save(filmeExistente)).thenReturn(filmeExistente);
+        Mockito.when(filmeRepository.findAllByIdLegadoIsNotNull()).thenReturn(Collections.singletonList(filmeExistente));
 
         var resultadoFilmeAtualizado = service.atualizarFilmeV1(filmeAtualizado);
 

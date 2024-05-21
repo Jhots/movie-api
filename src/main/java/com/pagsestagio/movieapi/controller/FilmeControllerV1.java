@@ -4,7 +4,6 @@ import com.pagsestagio.movieapi.controller.resposta.FilmeResposta;
 import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaRetornaListaDeFilmesOuExcecaoV1;
 import com.pagsestagio.movieapi.model.FilmeDTOV1;
-import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaListaDeFilmesOuExcecaoV1;
 import com.pagsestagio.movieapi.service.FilmeService;

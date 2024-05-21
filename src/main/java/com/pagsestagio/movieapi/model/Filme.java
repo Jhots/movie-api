@@ -76,11 +76,23 @@ public class Filme {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Filme filme = (Filme) o;
-        return Objects.equals(id, filme.id) && Objects.equals(idLegado, filme.idLegado) && Objects.equals(idPublico, filme.idPublico) && Objects.equals(nomeFilme, filme.nomeFilme);
+
+        if (id != null && filme.id != null) {
+            return Objects.equals(id, filme.id);
+        } else if (id == null && filme.id == null) {
+            return Objects.equals(idLegado, filme.idLegado) &&
+                    Objects.equals(idPublico, filme.idPublico) &&
+                    Objects.equals(nomeFilme, filme.nomeFilme);
+        } else {
+            return false;
+        }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, idLegado, idPublico, nomeFilme);
+        if (id != null) {
+            return Objects.hash(id);
+        }
+        return Objects.hash(idLegado, idPublico, nomeFilme);
     }
 }
