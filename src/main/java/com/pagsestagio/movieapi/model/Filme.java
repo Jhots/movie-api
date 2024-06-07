@@ -20,6 +20,25 @@ public class Filme {
     this.nomeFilme = nomeFilme;
   }
 
+  public Filme(
+      Integer id,
+      Integer idLegado,
+      UUID idPublico,
+      String nomeFilme,
+      String sinopseFilme,
+      String categoriaFilme,
+      int anoFilme,
+      String diretorFilme) {
+    this.id = id;
+    this.idLegado = idLegado;
+    this.idPublico = UUID.randomUUID();
+    this.nomeFilme = nomeFilme;
+    this.sinopseFilme = sinopseFilme;
+    this.categoriaFilme = categoriaFilme;
+    this.anoFilme = anoFilme;
+    this.diretorFilme = diretorFilme;
+  }
+
   public Filme() {
     this.idPublico = UUID.randomUUID();
   }
@@ -37,6 +56,18 @@ public class Filme {
 
   @Column(name = "MOVIE_NAME")
   private String nomeFilme;
+
+  @Column(name = "MOVIE_SYNOPSIS")
+  private String sinopseFilme;
+
+  @Column(name = "MOVIE_CATEGORY")
+  private String categoriaFilme;
+
+  @Column(name = "MOVIE_YEAR")
+  private int anoFilme;
+
+  @Column(name = "MOVIE_DIRECTOR")
+  private String diretorFilme;
 
   public Integer getId() {
     return id;
@@ -70,6 +101,38 @@ public class Filme {
     this.nomeFilme = nomeFilme;
   }
 
+  public String getSinopseFilme() {
+    return sinopseFilme;
+  }
+
+  public void setSinopseFilme(String sinopseFilme) {
+    this.sinopseFilme = sinopseFilme;
+  }
+
+  public String getCategoriaFilme() {
+    return categoriaFilme;
+  }
+
+  public void setCategoriaFilme(String categoriaFilme) {
+    this.categoriaFilme = categoriaFilme;
+  }
+
+  public int getAnoFilme() {
+    return anoFilme;
+  }
+
+  public void setAnoFilme(int anoFilme) {
+    this.anoFilme = anoFilme;
+  }
+
+  public String getDiretorFilme() {
+    return diretorFilme;
+  }
+
+  public void setDiretorFilme(String diretorFilme) {
+    this.diretorFilme = diretorFilme;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -81,7 +144,11 @@ public class Filme {
     } else if (id == null && filme.id == null) {
       return Objects.equals(idLegado, filme.idLegado)
           && Objects.equals(idPublico, filme.idPublico)
-          && Objects.equals(nomeFilme, filme.nomeFilme);
+          && Objects.equals(nomeFilme, filme.nomeFilme)
+          && Objects.equals(sinopseFilme, filme.sinopseFilme)
+          && Objects.equals(categoriaFilme, filme.categoriaFilme)
+          && anoFilme == filme.anoFilme
+          && Objects.equals(diretorFilme, filme.diretorFilme);
     } else {
       return false;
     }
@@ -92,6 +159,7 @@ public class Filme {
     if (id != null) {
       return Objects.hash(id);
     }
-    return Objects.hash(idLegado, idPublico, nomeFilme);
+    return Objects.hash(
+        idLegado, idPublico, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
   }
 }
