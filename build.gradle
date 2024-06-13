@@ -22,7 +22,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'com.oracle.database.jdbc', name: 'ojdbc11', version: '21.3.0.0'
     runtimeOnly 'com.h2database:h2'
-    implementation 'org.flywaydb:flyway-core:9.0.1'
+    implementation "org.flywaydb:flyway-database-oracle"
 }
 
 tasks.named('test') {

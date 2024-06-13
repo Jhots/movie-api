@@ -6,7 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
 
+import java.sql.Types;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -45,13 +47,14 @@ public class Filme {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "ID")
+  @Column(name = "MOVIE_ID")
   private Integer id;
 
   @Column(name = "LEGACY_ID")
   private Integer idLegado;
 
   @Column(name = "PUBLIC_ID")
+  @JdbcTypeCode(Types.VARCHAR)
   private UUID idPublico;
 
   @Column(name = "MOVIE_NAME")
