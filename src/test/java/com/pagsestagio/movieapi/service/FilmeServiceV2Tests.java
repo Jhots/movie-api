@@ -1,7 +1,5 @@
 package com.pagsestagio.movieapi.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
@@ -13,6 +11,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 class FilmeServiceV2Tests {
