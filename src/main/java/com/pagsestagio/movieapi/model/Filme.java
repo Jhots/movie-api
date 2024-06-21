@@ -29,7 +29,7 @@ public class Filme {
       String nomeFilme,
       String sinopseFilme,
       String categoriaFilme,
-      int anoFilme,
+      Integer anoFilme,
       String diretorFilme) {
     this.id = id;
     this.idLegado = idLegado;
@@ -67,7 +67,7 @@ public class Filme {
   private String categoriaFilme;
 
   @Column(name = "MOVIE_YEAR")
-  private int anoFilme;
+  private Integer anoFilme;
 
   @Column(name = "MOVIE_DIRECTOR")
   private String diretorFilme;
@@ -120,11 +120,11 @@ public class Filme {
     this.categoriaFilme = categoriaFilme;
   }
 
-  public int getAnoFilme() {
+  public Integer getAnoFilme() {
     return anoFilme;
   }
 
-  public void setAnoFilme(int anoFilme) {
+  public void setAnoFilme(Integer anoFilme) {
     this.anoFilme = anoFilme;
   }
 
@@ -146,12 +146,12 @@ public class Filme {
       return Objects.equals(id, filme.id);
     } else if (id == null && filme.id == null) {
       return Objects.equals(idLegado, filme.idLegado)
-          && Objects.equals(idPublico, filme.idPublico)
-          && Objects.equals(nomeFilme, filme.nomeFilme)
-          && Objects.equals(sinopseFilme, filme.sinopseFilme)
-          && Objects.equals(categoriaFilme, filme.categoriaFilme)
-          && anoFilme == filme.anoFilme
-          && Objects.equals(diretorFilme, filme.diretorFilme);
+              && Objects.equals(idPublico, filme.idPublico)
+              && Objects.equals(nomeFilme, filme.nomeFilme)
+              && Objects.equals(sinopseFilme, filme.sinopseFilme)
+              && Objects.equals(categoriaFilme, filme.categoriaFilme)
+              && anoFilme == filme.anoFilme
+              && Objects.equals(diretorFilme, filme.diretorFilme);
     } else {
       return false;
     }
@@ -163,6 +163,6 @@ public class Filme {
       return Objects.hash(id);
     }
     return Objects.hash(
-        idLegado, idPublico, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
+            idLegado, idPublico, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
   }
 }

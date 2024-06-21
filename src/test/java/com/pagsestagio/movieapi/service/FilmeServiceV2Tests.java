@@ -98,7 +98,9 @@ class FilmeServiceV2Tests {
         resultadoFilmeCriado.nomeFilme(),
         "O nome do filme deve ser nulo se o filme não puder ser criado.");
     assertEquals(
-        "O registro já existe, faça um PUT para atualizar.",
+        "Este filme já está cadastrado com o seguinte ID: "
+            + filmeExistente.getIdPublico()
+            + ". Faça um PUT para atualizar.",
         resultadoFilmeCriado.mensagemStatus(),
         "Deve haver erro ao tentar criar um filme com identificador já existente.");
   }
@@ -148,7 +150,7 @@ class FilmeServiceV2Tests {
         resultadoFilmeAtualizado.nomeFilme(),
         "O nome do filme deve ser nulo se o filme não puder ser atualizado.");
     assertEquals(
-        "O registro não existe, faça um POST para inserir.",
+        "Não há filme cadastrado com o ID: " + idPublico + ". Faça um POST para inserir.",
         resultadoFilmeAtualizado.mensagemStatus(),
         "Deve haver erro ao tentar atualizar um filme com identificador inexistente.");
   }
@@ -198,4 +200,44 @@ class FilmeServiceV2Tests {
         resultadoSolicitacaoDeletarFilme.mensagemStatus(),
         "Deve haver erro ao tentar excluir um filme com identificador inexistente.");
   }
+
+  @Test
+  public void deveCriarNovoFilmeQuandoTodosOsCamposSaoValidos() {
+    FilmeDTOV2 novoFilme = new FilmeDTOV2(null, null, null, "Matrix", "Sinopse do filme", "Ficção Científica", 1999, "Wachowskis");
+
+    Mockito.when(filmeRepository.findByNomeFilme("Matrix")).thenReturn(Optional.empty());
+
+    FilmeResultadoRetornaFilmeOuMensagem resultadoFilmeCriado = service.criarFilmeV2(novoFilme);
+
+    assertNotNull(resultadoFilmeCriado.idpublico(), "O id do filme deve ser retornado após a criação.");
+    assertEquals("Matrix", resultadoFilmeCriado.nomeFilme(), "O nome do filme retornado deve ser 'Matrix'.");
+    assertEquals("Sinopse do filme", resultadoFilmeCriado.sinopseFilme(), "A sinopse do filme retornado deve ser 'Sinopse do filme'.");
+    assertEquals("Ficção Científica", resultadoFilmeCriado.categoriaFilme(), "A categoria do filme retornado deve ser 'Ficção Científica'.");
+    assertEquals(1999, resultadoFilmeCriado.anoFilme(), "O ano do filme retornado deve ser 1999.");
+    assertEquals("Wachowskis", resultadoFilmeCriado.diretorFilme(), "O diretor do filme retornado deve ser 'Wachowskis'.");
+    assertNull(resultadoFilmeCriado.mensagemStatus(), "Não deve haver erro ao criar um novo filme com identificador válido.");
+  }
+
+  @Test
+  public void deveAtualizarFilmeExistenteQuandoTodosOsCamposSaoValidos() {
+    UUID idPublico = UUID.randomUUID();
+    FilmeDTOV2 filmeAtualizado = new FilmeDTOV2(null, null, idPublico, "Matrix Reloaded", "Nova sinopse", "Ação", 2003, "Wachowskis");
+    Filme filmeExistente = new Filme();
+    filmeExistente.setIdPublico(idPublico);
+    filmeExistente.setNomeFilme("Matrix");
+
+    Mockito.when(filmeRepository.findByIdPublico(idPublico)).thenReturn(Optional.of(filmeExistente));
+    Mockito.when(filmeRepository.save(Mockito.any(Filme.class))).thenReturn(filmeExistente);
+
+    FilmeResultadoRetornaFilmeOuMensagem resultadoFilmeAtualizado = service.atualizarFilmeV2(filmeAtualizado);
+
+    assertEquals(idPublico, resultadoFilmeAtualizado.idpublico(), "O id do filme retornado deve ser igual ao id do filme atualizado.");
+    assertEquals("Matrix Reloaded", resultadoFilmeAtualizado.nomeFilme(), "O nome do filme retornado deve ser 'Matrix Reloaded'.");
+    assertEquals("Nova sinopse", resultadoFilmeAtualizado.sinopseFilme(), "A sinopse do filme retornado deve ser 'Nova sinopse'.");
+    assertEquals("Ação", resultadoFilmeAtualizado.categoriaFilme(), "A categoria do filme retornado deve ser 'Ação'.");
+    assertEquals(2003, resultadoFilmeAtualizado.anoFilme(), "O ano do filme retornado deve ser 2003.");
+    assertEquals("Wachowskis", resultadoFilmeAtualizado.diretorFilme(), "O diretor do filme retornado deve ser 'Wachowskis'.");
+    assertNull(resultadoFilmeAtualizado.mensagemStatus(), "Não deve haver erro ao atualizar um filme existente.");
+  }
+
 }

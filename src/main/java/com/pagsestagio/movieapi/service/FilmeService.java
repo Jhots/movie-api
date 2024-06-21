@@ -66,11 +66,23 @@ public class FilmeService {
       Filme filmeprocurado = optionalFilme.get();
       retornoDoFilmePorIdentificador =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              filmeprocurado.getIdPublico(), filmeprocurado.getNomeFilme(), null);
+              filmeprocurado.getIdPublico(),
+              filmeprocurado.getNomeFilme(),
+              filmeprocurado.getSinopseFilme(),
+              filmeprocurado.getCategoriaFilme(),
+              filmeprocurado.getAnoFilme(),
+              filmeprocurado.getDiretorFilme(),
+              null);
     } else {
       retornoDoFilmePorIdentificador =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              null, null, "Identificador não encontrado! Não foi possível obter o filme.");
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Identificador não encontrado! Não foi possível obter o filme.");
     }
 
     return retornoDoFilmePorIdentificador;
@@ -117,18 +129,37 @@ public class FilmeService {
 
     if (filmeRequisicao.getNomeFilme() == null) {
       retornoCriacaoDeFilme =
-          new FilmeResultadoRetornaFilmeOuMensagem(null, null, "O nome do filme é obrigatório.");
+          new FilmeResultadoRetornaFilmeOuMensagem(
+              null, null, null, null, null, null, "O nome do filme é obrigatório.");
     } else if (filmeExistente.isPresent()) {
       retornoCriacaoDeFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              null, null, "O registro já existe, faça um PUT para atualizar.");
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Este filme já está cadastrado com o seguinte ID: "
+                  + filmeExistente.get().getIdPublico()
+                  + ". Faça um PUT para atualizar.");
     } else {
       Filme filmecriado = new Filme();
       filmecriado.setNomeFilme(filmeRequisicao.getNomeFilme());
+      filmecriado.setSinopseFilme(filmeRequisicao.getSinopseFilme());
+      filmecriado.setCategoriaFilme(filmeRequisicao.getCategoriaFilme());
+      filmecriado.setAnoFilme(filmeRequisicao.getAnoFilme());
+      filmecriado.setDiretorFilme(filmeRequisicao.getDiretorFilme());
       filmeRepository.save(filmecriado);
       retornoCriacaoDeFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              filmecriado.getIdPublico(), filmecriado.getNomeFilme(), null);
+              filmecriado.getIdPublico(),
+              filmecriado.getNomeFilme(),
+              filmecriado.getSinopseFilme(),
+              filmecriado.getCategoriaFilme(),
+              filmecriado.getAnoFilme(),
+              filmecriado.getDiretorFilme(),
+              null);
     }
 
     return retornoCriacaoDeFilme;
@@ -173,22 +204,45 @@ public class FilmeService {
     Optional<Filme> filmeExistente =
         filmeRepository.findByIdPublico(filmeRequisicao.getIdPublico());
 
-    if (filmeExistente.isPresent() && filmeRequisicao.getNomeFilme() != null) {
+    if (filmeRequisicao.getIdPublico() == null) {
+      retornoAtualizacaoFilme =
+          new FilmeResultadoRetornaFilmeOuMensagem(
+              null, null, null, null, null, null, "É obrigatório informar o ID do filme.");
+    } else if (filmeExistente.isPresent() && filmeRequisicao.getNomeFilme() != null) {
       Filme filmeatualizado = filmeExistente.get();
       filmeatualizado.setNomeFilme(filmeRequisicao.getNomeFilme());
+      filmeatualizado.setSinopseFilme(filmeRequisicao.getSinopseFilme());
+      filmeatualizado.setCategoriaFilme(filmeRequisicao.getCategoriaFilme());
+      filmeatualizado.setAnoFilme(filmeRequisicao.getAnoFilme());
+      filmeatualizado.setDiretorFilme(filmeRequisicao.getDiretorFilme());
       filmeRepository.save(filmeatualizado);
 
       retornoAtualizacaoFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              filmeatualizado.getIdPublico(), filmeatualizado.getNomeFilme(), null);
+              filmeatualizado.getIdPublico(),
+              filmeatualizado.getNomeFilme(),
+              filmeatualizado.getSinopseFilme(),
+              filmeatualizado.getCategoriaFilme(),
+              filmeatualizado.getAnoFilme(),
+              filmeatualizado.getDiretorFilme(),
+              null);
 
     } else if (filmeExistente.isPresent() && filmeRequisicao.getNomeFilme() == null) {
       retornoAtualizacaoFilme =
-          new FilmeResultadoRetornaFilmeOuMensagem(null, null, "O nome do filme é obrigatório.");
+          new FilmeResultadoRetornaFilmeOuMensagem(
+              null, null, null, null, null, null, "O nome do filme é obrigatório.");
     } else {
       retornoAtualizacaoFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              null, null, "O registro não existe, faça um POST para inserir.");
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Não há filme cadastrado com o ID: "
+                  + filmeRequisicao.getIdPublico()
+                  + ". Faça um POST para inserir.");
     }
 
     return retornoAtualizacaoFilme;
@@ -225,11 +279,18 @@ public class FilmeService {
     if (optionalFilme.isPresent()) {
       filmeRepository.deleteByIdPublico(idRequisicao);
       retornoDeletarFilme =
-          new FilmeResultadoRetornaFilmeOuMensagem(null, null, "Filme excluído com sucesso!");
+          new FilmeResultadoRetornaFilmeOuMensagem(
+              null, null, null, null, null, null, "Filme excluído com sucesso!");
     } else {
       retornoDeletarFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              null, null, "Identificador não encontrado! Não foi possível excluir o filme.");
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              "Identificador não encontrado! Não foi possível excluir o filme.");
     }
 
     return retornoDeletarFilme;

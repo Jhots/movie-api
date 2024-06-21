@@ -26,10 +26,24 @@ class FilmeControllerV2Tests extends IntegrationBaseTest {
 
   @Autowired FilmeRepository filmeRepository;
 
+  UUID uuidNaoPresenteNoBanco = UUID.fromString("f1ea8127-3766-470d-900a-0dc692fb1741");
   UUID uuidFilme = UUID.fromString("8bec4f7d-0dc5-4a93-a704-ccb44cc6fa2f");
   String nomeFilme = "Avatar";
-  UUID uuidNaoPresenteNoBanco = UUID.fromString("f1ea8127-3766-470d-900a-0dc692fb1741");
+  String sinopseFilme =
+      "Um ex-fuzileiro naval paraplégico é despachado para a lua Pandora em uma missão única.";
+  String categoriaFilme = "Ficção Científica";
+  Integer anoFilme = 2009;
+  String diretorFilme = "James Cameron";
 
+  FilmeDTOV2 filmeCompleto =
+      new FilmeDTOV2(
+          null, null, uuidFilme, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
+  FilmeDTOV2 filmeCompletoExcetoNome =
+      new FilmeDTOV2(
+          null, null, uuidFilme, null, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
+
+  FilmeDTOV2 filmeTotalmenteIncompleto =
+      new FilmeDTOV2(null, null, null, null, null, null, null, null);
   FilmeDTOV2 filmeSomenteNome = new FilmeDTOV2(null, null, null, "Avatar");
   FilmeDTOV2 filmeSemNomeEIdentificador = new FilmeDTOV2(null, null, null, null);
   FilmeDTOV2 filmeIdentificadorENomeUm = new FilmeDTOV2(null, null, uuidFilme, nomeFilme);
@@ -53,6 +67,19 @@ class FilmeControllerV2Tests extends IntegrationBaseTest {
   }
 
   @Test
+  void deveRetornarOkQuandoFilmeDaResquisicaoECompleto() throws Exception {
+
+    var requisicaoDeFilmeCompleto =
+            post("/v2/filmes")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(filmeCompleto));
+
+    var resultadoRequisicaoDeFilmeCompleto = mockMvc.perform(requisicaoDeFilmeCompleto);
+
+    resultadoRequisicaoDeFilmeCompleto.andExpect(status().isOk());
+  }
+
+  @Test
   void deveRetornarBadRequestQuandoFilmeDaRequisicaoPossuiNomeNulo() throws Exception {
 
     var requisicaoDeFilmeComNomeNulo =
@@ -60,9 +87,18 @@ class FilmeControllerV2Tests extends IntegrationBaseTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(filmeSemNomeEIdentificador));
 
-    var resultadoRequisicao = mockMvc.perform(requisicaoDeFilmeComNomeNulo);
+    var requisicaoDeFilmeComplexoExcetoNome =
+            post("/v2/filmes")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(filmeCompletoExcetoNome));
 
-    resultadoRequisicao.andExpect(status().isBadRequest());
+    var resultadoRequisicaoFilmeComNomeNulo = mockMvc.perform(requisicaoDeFilmeComNomeNulo);
+
+    var resultadoRequisicaoFilmeComplexoExcetoNome = mockMvc.perform(requisicaoDeFilmeComplexoExcetoNome);
+
+
+    resultadoRequisicaoFilmeComNomeNulo.andExpect(status().isBadRequest());
+    resultadoRequisicaoFilmeComplexoExcetoNome.andExpect(status().isBadRequest());
   }
 
   @Test
@@ -76,12 +112,12 @@ class FilmeControllerV2Tests extends IntegrationBaseTest {
     var requisicaoDeFilmeComIdentificadorJaExistente =
         post("/v2/filmes")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
+            .content(objectMapper.writeValueAsString(filmeCompleto));
 
-    var resultadorequisicaoDeFilmeComIdentificadorJaExistente =
+    var resultadoRequisicaoDeFilmeComIdentificadorJaExistente =
         mockMvc.perform(requisicaoDeFilmeComIdentificadorJaExistente);
 
-    resultadorequisicaoDeFilmeComIdentificadorJaExistente.andExpect(status().isBadRequest());
+    resultadoRequisicaoDeFilmeComIdentificadorJaExistente.andExpect(status().isBadRequest());
   }
 
   @Test
@@ -137,8 +173,7 @@ class FilmeControllerV2Tests extends IntegrationBaseTest {
   }
 
   @Test
-  void deveRetornarNotFoundQuandoRequisicaoSolicitarDeletarUmIdentificadorNaoCadastrado()
-      throws Exception {
+  void deveRetornarNotFoundQuandoRequisicaoSolicitarDeletarUmIdentificadorNaoCadastrado() throws Exception {
 
     Filme filmeNoBanco = new Filme();
     filmeNoBanco.setIdPublico(uuidFilme);
@@ -155,17 +190,21 @@ class FilmeControllerV2Tests extends IntegrationBaseTest {
   }
 
   @Test
-  void deveRetornarBadRequestQuandoRequsicaoTentarAtualizarFilmeSomenteComNomeNulo()
-      throws Exception {
+  void deveRetornarBadRequestQuandoRequisicaoTentarAtualizarFilmeSomenteComNomeNulo() throws Exception {
 
     Filme filmeNoBanco = new Filme();
     filmeNoBanco.setIdPublico(uuidFilme);
+    filmeNoBanco.setNomeFilme(nomeFilme);
+    filmeNoBanco.setSinopseFilme(sinopseFilme);
+    filmeNoBanco.setCategoriaFilme(categoriaFilme);
+    filmeNoBanco.setAnoFilme(anoFilme);
+    filmeNoBanco.setDiretorFilme(diretorFilme);
     filmeRepository.save(filmeNoBanco);
 
     var requisicaoDeFilmeComNomeNulo =
         put("/v2/filmes")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filmeNoBanco));
+            .content(objectMapper.writeValueAsString(filmeSemNomeEIdentificador));
 
     var resultadoRequisicaoDeFilmeComNomeNulo = mockMvc.perform(requisicaoDeFilmeComNomeNulo);
 
@@ -173,12 +212,15 @@ class FilmeControllerV2Tests extends IntegrationBaseTest {
   }
 
   @Test
-  void deveRetornarOkQuandoRequisicaoTentarAtualizarFilmeComUmIdentificadorExistenteENomeFilme()
-      throws Exception {
+  void deveRetornarOkQuandoRequisicaoTentarAtualizarFilmeComUmIdentificadorExistenteENomeFilme() throws Exception {
 
     Filme filmeNoBanco = new Filme();
     filmeNoBanco.setIdPublico(uuidFilme);
     filmeNoBanco.setNomeFilme(nomeFilme);
+    filmeNoBanco.setSinopseFilme(sinopseFilme);
+    filmeNoBanco.setCategoriaFilme(categoriaFilme);
+    filmeNoBanco.setAnoFilme(anoFilme);
+    filmeNoBanco.setDiretorFilme(diretorFilme);
     filmeRepository.save(filmeNoBanco);
 
     FilmeDTOV2 filmeAtualizado = new FilmeDTOV2(null, null, filmeNoBanco.getIdPublico(), nomeFilme);
@@ -195,13 +237,15 @@ class FilmeControllerV2Tests extends IntegrationBaseTest {
   }
 
   @Test
-  void
-      deveRetornarBadRequestQuandoRequisicaoTentarAtualizarComIdentificadorNaoPresenteNaListaDeFilmes()
-          throws Exception {
+  void deveRetornarBadRequestQuandoRequisicaoTentarAtualizarComIdentificadorNaoPresenteNaListaDeFilmes() throws Exception {
 
     Filme filmeNoBanco = new Filme();
     filmeNoBanco.setIdPublico(uuidFilme);
     filmeNoBanco.setNomeFilme(nomeFilme);
+    filmeNoBanco.setSinopseFilme(sinopseFilme);
+    filmeNoBanco.setCategoriaFilme(categoriaFilme);
+    filmeNoBanco.setAnoFilme(anoFilme);
+    filmeNoBanco.setDiretorFilme(diretorFilme);
     filmeRepository.save(filmeNoBanco);
 
     Filme filmeIdentificadorRepetido = new Filme();
