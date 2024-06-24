@@ -71,17 +71,10 @@ public class FilmeService {
               filmeprocurado.getSinopseFilme(),
               filmeprocurado.getCategoriaFilme(),
               filmeprocurado.getAnoFilme(),
-              filmeprocurado.getDiretorFilme(),
-              null);
+              filmeprocurado.getDiretorFilme());
     } else {
       retornoDoFilmePorIdentificador =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
               "Identificador não encontrado! Não foi possível obter o filme.");
     }
 
@@ -129,17 +122,10 @@ public class FilmeService {
 
     if (filmeRequisicao.getNomeFilme() == null) {
       retornoCriacaoDeFilme =
-          new FilmeResultadoRetornaFilmeOuMensagem(
-              null, null, null, null, null, null, "O nome do filme é obrigatório.");
+          new FilmeResultadoRetornaFilmeOuMensagem("O nome do filme é obrigatório.");
     } else if (filmeExistente.isPresent()) {
       retornoCriacaoDeFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
               "Este filme já está cadastrado com o seguinte ID: "
                   + filmeExistente.get().getIdPublico()
                   + ". Faça um PUT para atualizar.");
@@ -158,8 +144,7 @@ public class FilmeService {
               filmecriado.getSinopseFilme(),
               filmecriado.getCategoriaFilme(),
               filmecriado.getAnoFilme(),
-              filmecriado.getDiretorFilme(),
-              null);
+              filmecriado.getDiretorFilme());
     }
 
     return retornoCriacaoDeFilme;
@@ -206,8 +191,7 @@ public class FilmeService {
 
     if (filmeRequisicao.getIdPublico() == null) {
       retornoAtualizacaoFilme =
-          new FilmeResultadoRetornaFilmeOuMensagem(
-              null, null, null, null, null, null, "É obrigatório informar o ID do filme.");
+          new FilmeResultadoRetornaFilmeOuMensagem("É obrigatório informar o ID do filme.");
     } else if (filmeExistente.isPresent() && filmeRequisicao.getNomeFilme() != null) {
       Filme filmeatualizado = filmeExistente.get();
       filmeatualizado.setNomeFilme(filmeRequisicao.getNomeFilme());
@@ -224,22 +208,14 @@ public class FilmeService {
               filmeatualizado.getSinopseFilme(),
               filmeatualizado.getCategoriaFilme(),
               filmeatualizado.getAnoFilme(),
-              filmeatualizado.getDiretorFilme(),
-              null);
+              filmeatualizado.getDiretorFilme());
 
     } else if (filmeExistente.isPresent() && filmeRequisicao.getNomeFilme() == null) {
       retornoAtualizacaoFilme =
-          new FilmeResultadoRetornaFilmeOuMensagem(
-              null, null, null, null, null, null, "O nome do filme é obrigatório.");
+          new FilmeResultadoRetornaFilmeOuMensagem("O nome do filme é obrigatório.");
     } else {
       retornoAtualizacaoFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
               "Não há filme cadastrado com o ID: "
                   + filmeRequisicao.getIdPublico()
                   + ". Faça um POST para inserir.");
@@ -278,18 +254,10 @@ public class FilmeService {
 
     if (optionalFilme.isPresent()) {
       filmeRepository.deleteByIdPublico(idRequisicao);
-      retornoDeletarFilme =
-          new FilmeResultadoRetornaFilmeOuMensagem(
-              null, null, null, null, null, null, "Filme excluído com sucesso!");
+      retornoDeletarFilme = new FilmeResultadoRetornaFilmeOuMensagem("Filme excluído com sucesso!");
     } else {
       retornoDeletarFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              null,
-              null,
-              null,
-              null,
-              null,
-              null,
               "Identificador não encontrado! Não foi possível excluir o filme.");
     }
 

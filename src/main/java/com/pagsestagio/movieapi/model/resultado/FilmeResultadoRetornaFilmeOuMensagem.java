@@ -10,4 +10,12 @@ public record FilmeResultadoRetornaFilmeOuMensagem(
     Integer anoFilme,
     String diretorFilme,
     String mensagemStatus)
-    implements FilmeResultado {}
+    implements FilmeResultado {
+    public FilmeResultadoRetornaFilmeOuMensagem(UUID idpublico, String nomeFilme, String sinopseFilme, String categoriaFilme, Integer anoFilme, String diretorFilme) {
+        this(idpublico, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme, null);
+    }
+
+    public FilmeResultadoRetornaFilmeOuMensagem(String mensagemStatus) {
+        this(null, null, null, null, null, null, mensagemStatus);
+    }
+}

@@ -46,14 +46,11 @@ public class FilmeControllerV2 {
                       retornoService.sinopseFilme(),
                       retornoService.categoriaFilme(),
                       retornoService.anoFilme(),
-                      retornoService.diretorFilme(),
-                      null));
+                      retornoService.diretorFilme()));
     } else {
       respostaRequisicao =
           ResponseEntity.status(HttpStatus.NOT_FOUND)
-              .body(
-                  new FilmeRespostaRetornaFilmeOuMensagem(
-                      null, null, null, null, null, null, retornoService.mensagemStatus()));
+              .body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.mensagemStatus()));
     }
     return respostaRequisicao;
   }
@@ -73,14 +70,11 @@ public class FilmeControllerV2 {
                       retornoService.sinopseFilme(),
                       retornoService.categoriaFilme(),
                       retornoService.anoFilme(),
-                      retornoService.diretorFilme(),
-                      null));
+                      retornoService.diretorFilme()));
     } else {
       respostaRequisicao =
           ResponseEntity.badRequest()
-              .body(
-                  new FilmeRespostaRetornaFilmeOuMensagem(
-                      null, null, null, null, null, null, retornoService.mensagemStatus()));
+              .body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.mensagemStatus()));
     }
     return respostaRequisicao;
   }
@@ -99,14 +93,11 @@ public class FilmeControllerV2 {
                       retornoService.sinopseFilme(),
                       retornoService.categoriaFilme(),
                       retornoService.anoFilme(),
-                      retornoService.diretorFilme(),
-                      null));
+                      retornoService.diretorFilme()));
     } else {
       respostaRequisicao =
           ResponseEntity.badRequest()
-              .body(
-                  new FilmeRespostaRetornaFilmeOuMensagem(
-                      null, null, null, null, null, null, retornoService.mensagemStatus()));
+              .body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.mensagemStatus()));
     }
     return respostaRequisicao;
   }
@@ -120,15 +111,11 @@ public class FilmeControllerV2 {
     if (retornoService.mensagemStatus().equals("Filme excluído com sucesso!")) {
       respostaRequisicao =
           ResponseEntity.ok()
-              .body(
-                  new FilmeRespostaRetornaFilmeOuMensagem(
-                      null, null, null, null, null, null, retornoService.mensagemStatus()));
+              .body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.mensagemStatus()));
     } else {
       respostaRequisicao =
           ResponseEntity.status(HttpStatus.NOT_FOUND)
-              .body(
-                  new FilmeRespostaRetornaFilmeOuMensagem(
-                      null, null, null, null, null, null, retornoService.mensagemStatus()));
+              .body(new FilmeRespostaRetornaFilmeOuMensagem(retornoService.mensagemStatus()));
     }
     return respostaRequisicao;
   }
