@@ -26,6 +26,8 @@ public class FilmeService {
     this.filmeRepository = filmeRepository;
   }
 
+  @Autowired private OmdbService omdbService;
+
   List<FilmeDTOV1> getListaDeFilmesVersaoUm() {
     List<Filme> filmesComIdLegado = filmeRepository.findAllByIdLegadoIsNotNull();
     List<FilmeDTOV1> listaDeFilmes = new ArrayList<>();
@@ -130,21 +132,34 @@ public class FilmeService {
                   + filmeExistente.get().getIdPublico()
                   + ". Faça um PUT para atualizar.");
     } else {
-      Filme filmecriado = new Filme();
-      filmecriado.setNomeFilme(filmeRequisicao.getNomeFilme());
-      filmecriado.setSinopseFilme(filmeRequisicao.getSinopseFilme());
-      filmecriado.setCategoriaFilme(filmeRequisicao.getCategoriaFilme());
-      filmecriado.setAnoFilme(filmeRequisicao.getAnoFilme());
-      filmecriado.setDiretorFilme(filmeRequisicao.getDiretorFilme());
-      filmeRepository.save(filmecriado);
+
+      Filme filmeDaApiExterna = omdbService.getFilmePorNome(filmeRequisicao.getNomeFilme());
+
+      Filme filmeCriado = new Filme();
+      filmeCriado.setNomeFilme(filmeRequisicao.getNomeFilme());
+
+      if (filmeDaApiExterna != null && filmeDaApiExterna.getNomeFilme() != null) {
+        filmeCriado.setSinopseFilme(filmeDaApiExterna.getSinopseFilme());
+        filmeCriado.setCategoriaFilme(filmeDaApiExterna.getCategoriaFilme());
+        filmeCriado.setAnoFilme(filmeDaApiExterna.getAnoFilme());
+        filmeCriado.setDiretorFilme(filmeDaApiExterna.getDiretorFilme());
+      } else {
+        filmeCriado.setSinopseFilme(filmeRequisicao.getSinopseFilme());
+        filmeCriado.setCategoriaFilme(filmeRequisicao.getCategoriaFilme());
+        filmeCriado.setAnoFilme(filmeRequisicao.getAnoFilme());
+        filmeCriado.setDiretorFilme(filmeRequisicao.getDiretorFilme());
+      }
+
+      filmeRepository.save(filmeCriado);
+
       retornoCriacaoDeFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              filmecriado.getIdPublico(),
-              filmecriado.getNomeFilme(),
-              filmecriado.getSinopseFilme(),
-              filmecriado.getCategoriaFilme(),
-              filmecriado.getAnoFilme(),
-              filmecriado.getDiretorFilme());
+              filmeCriado.getIdPublico(),
+              filmeCriado.getNomeFilme(),
+              filmeCriado.getSinopseFilme(),
+              filmeCriado.getCategoriaFilme(),
+              filmeCriado.getAnoFilme(),
+              filmeCriado.getDiretorFilme());
     }
 
     return retornoCriacaoDeFilme;

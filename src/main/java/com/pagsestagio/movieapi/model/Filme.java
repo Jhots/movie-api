@@ -1,5 +1,6 @@
 package com.pagsestagio.movieapi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -57,18 +58,23 @@ public class Filme {
   @JdbcTypeCode(Types.VARCHAR)
   private UUID idPublico;
 
+  @JsonProperty("Title")
   @Column(name = "MOVIE_NAME")
   private String nomeFilme;
 
+  @JsonProperty("Plot")
   @Column(name = "MOVIE_SYNOPSIS")
   private String sinopseFilme;
 
+  @JsonProperty("Genre")
   @Column(name = "MOVIE_CATEGORY")
   private String categoriaFilme;
 
+  @JsonProperty("Year")
   @Column(name = "MOVIE_YEAR")
   private Integer anoFilme;
 
+  @JsonProperty("Director")
   @Column(name = "MOVIE_DIRECTOR")
   private String diretorFilme;
 
