@@ -6,6 +6,7 @@ import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaListaDeFilmesOuExcecaoV1;
+import com.pagsestagio.movieapi.omdb.service.OmdbService;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
