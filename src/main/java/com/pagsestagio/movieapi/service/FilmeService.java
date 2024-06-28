@@ -27,7 +27,8 @@ public class FilmeService {
     this.filmeRepository = filmeRepository;
   }
 
-  @Autowired private OmdbService omdbService;
+  @Autowired
+  private OmdbService omdbService;
 
   List<FilmeDTOV1> getListaDeFilmesVersaoUm() {
     List<Filme> filmesComIdLegado = filmeRepository.findAllByIdLegadoIsNotNull();
@@ -137,14 +138,15 @@ public class FilmeService {
       Filme filmeDaApiExterna = omdbService.getFilmePorNome(filmeRequisicao.getNomeFilme());
 
       Filme filmeCriado = new Filme();
-      filmeCriado.setNomeFilme(filmeRequisicao.getNomeFilme());
 
-      if (filmeDaApiExterna != null && filmeDaApiExterna.getNomeFilme() != null) {
+      if (filmeDaApiExterna.getNomeFilme() != null) {
+        filmeCriado.setNomeFilme(filmeDaApiExterna.getNomeFilme());
         filmeCriado.setSinopseFilme(filmeDaApiExterna.getSinopseFilme());
         filmeCriado.setCategoriaFilme(filmeDaApiExterna.getCategoriaFilme());
         filmeCriado.setAnoFilme(filmeDaApiExterna.getAnoFilme());
         filmeCriado.setDiretorFilme(filmeDaApiExterna.getDiretorFilme());
       } else {
+        filmeCriado.setNomeFilme(filmeRequisicao.getNomeFilme());
         filmeCriado.setSinopseFilme(filmeRequisicao.getSinopseFilme());
         filmeCriado.setCategoriaFilme(filmeRequisicao.getCategoriaFilme());
         filmeCriado.setAnoFilme(filmeRequisicao.getAnoFilme());

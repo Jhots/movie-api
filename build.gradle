@@ -24,7 +24,7 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     implementation "org.flywaydb:flyway-database-oracle"
     testImplementation 'org.mock-server:mockserver-netty:5.11.2'
-    implementation 'org.mock-server:mockserver-client-java:5.15.0'
+    testImplementation 'org.mock-server:mockserver-client-java:5.15.0'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.2'
 }
 

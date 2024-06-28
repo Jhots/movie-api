@@ -63,10 +63,12 @@ public class FilmeControllerV1Tests extends IntegrationBaseTest {
   @Test
   void deveRetornarOkQuandoFilmeDaRequisicaoPossuiIdentificadorENome() throws Exception {
 
+    String filmeIdentificadorENomeJson = "{ \"idLegado\": 1, \"Title\": \"Matrix\" }";
+
     var requisicaoDeFilmeComIdentificadorENome =
         post("/filmes")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filmeIdentificadorENomeUm));
+            .content(filmeIdentificadorENomeJson);
 
     var resultadoRequisicao = mockMvc.perform(requisicaoDeFilmeComIdentificadorENome);
 
@@ -181,16 +183,17 @@ public class FilmeControllerV1Tests extends IntegrationBaseTest {
   @Test
   void deveRetornarOkQuandoRequisicaoTentarAtualizarFilmeComUmIdentificadorExistenteENomeFilme()
       throws Exception {
-
     Filme filmeNoBanco = new Filme();
     filmeNoBanco.setIdLegado(1);
     filmeNoBanco.setNomeFilme("Avatar");
     filmeRepository.save(filmeNoBanco);
 
+    String filmeRepeticaoIdentificadorJson = "{ \"idLegado\": 1, \"Title\": \"Avatar\" }";
+
     var requisicaoDeFilmeComIdentificadorJaExistente =
         put("/filmes")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(filmeRepeticaoIdentificador));
+            .content(filmeRepeticaoIdentificadorJson);
 
     var resultadoRequisicaoDeFilmeComIdentificadorJaExistente =
         mockMvc.perform(requisicaoDeFilmeComIdentificadorJaExistente);
