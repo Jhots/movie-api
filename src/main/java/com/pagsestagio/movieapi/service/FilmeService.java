@@ -1,21 +1,21 @@
 package com.pagsestagio.movieapi.service;
 
+import com.pagsestagio.movieapi.apiExterna.omdb.service.OmdbService;
+import com.pagsestagio.movieapi.apiExterna.resposta.FilmeRespostaApiExternaRetornaDadosFilme;
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV1;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaListaDeFilmesOuExcecaoV1;
-import com.pagsestagio.movieapi.omdb.service.OmdbService;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FilmeService {
@@ -23,11 +23,11 @@ public class FilmeService {
   private final FilmeRepository filmeRepository;
 
   @Autowired
-  public FilmeService(FilmeRepository filmeRepository) {
+  public FilmeService(FilmeRepository filmeRepository, OmdbService omdbService) {
     this.filmeRepository = filmeRepository;
+    this.omdbService = omdbService;
   }
 
-  @Autowired
   private OmdbService omdbService;
 
   List<FilmeDTOV1> getListaDeFilmesVersaoUm() {
@@ -135,22 +135,33 @@ public class FilmeService {
                   + ". Faça um PUT para atualizar.");
     } else {
 
-      Filme filmeDaApiExterna = omdbService.getFilmePorNome(filmeRequisicao.getNomeFilme());
+      FilmeRespostaApiExternaRetornaDadosFilme filmeDaApiExterna =
+          omdbService.getFilmePorNome(filmeRequisicao.getNomeFilme());
 
-      Filme filmeCriado = new Filme();
+      Filme filmeCriado = null;
 
-      if (filmeDaApiExterna.getNomeFilme() != null) {
-        filmeCriado.setNomeFilme(filmeDaApiExterna.getNomeFilme());
-        filmeCriado.setSinopseFilme(filmeDaApiExterna.getSinopseFilme());
-        filmeCriado.setCategoriaFilme(filmeDaApiExterna.getCategoriaFilme());
-        filmeCriado.setAnoFilme(filmeDaApiExterna.getAnoFilme());
-        filmeCriado.setDiretorFilme(filmeDaApiExterna.getDiretorFilme());
+      if (filmeDaApiExterna != null && filmeDaApiExterna.nomeFilme() != null) {
+        filmeCriado =
+            new Filme(
+                null,
+                null,
+                null,
+                filmeDaApiExterna.nomeFilme(),
+                filmeDaApiExterna.sinopseFilme(),
+                filmeDaApiExterna.categoriaFilme(),
+                filmeDaApiExterna.anoFilme(),
+                filmeDaApiExterna.diretorFilme());
       } else {
-        filmeCriado.setNomeFilme(filmeRequisicao.getNomeFilme());
-        filmeCriado.setSinopseFilme(filmeRequisicao.getSinopseFilme());
-        filmeCriado.setCategoriaFilme(filmeRequisicao.getCategoriaFilme());
-        filmeCriado.setAnoFilme(filmeRequisicao.getAnoFilme());
-        filmeCriado.setDiretorFilme(filmeRequisicao.getDiretorFilme());
+        filmeCriado =
+            new Filme(
+                null,
+                null,
+                null,
+                filmeRequisicao.getNomeFilme(),
+                filmeRequisicao.getSinopseFilme(),
+                filmeRequisicao.getCategoriaFilme(),
+                filmeRequisicao.getAnoFilme(),
+                filmeRequisicao.getDiretorFilme());
       }
 
       filmeRepository.save(filmeCriado);

@@ -1,6 +1,6 @@
-package com.pagsestagio.movieapi.omdb.client;
+package com.pagsestagio.movieapi.apiExterna.omdb.client;
 
-import com.pagsestagio.movieapi.model.Filme;
+import com.pagsestagio.movieapi.apiExterna.resposta.FilmeRespostaApiExternaRetornaDadosFilme;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface OmdbClient {
 
   @GetMapping
-  Filme getFilmePorNome(
+  FilmeRespostaApiExternaRetornaDadosFilme getFilmePorNome(
       @RequestParam("apikey") String apiKey, @RequestParam("t") String nome);
 }

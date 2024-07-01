@@ -58,23 +58,18 @@ public class Filme {
   @JdbcTypeCode(Types.VARCHAR)
   private UUID idPublico;
 
-  @JsonProperty("Title")
   @Column(name = "MOVIE_NAME")
   private String nomeFilme;
 
-  @JsonProperty("Plot")
   @Column(name = "MOVIE_SYNOPSIS")
   private String sinopseFilme;
 
-  @JsonProperty("Genre")
   @Column(name = "MOVIE_CATEGORY")
   private String categoriaFilme;
 
-  @JsonProperty("Year")
   @Column(name = "MOVIE_YEAR")
   private Integer anoFilme;
 
-  @JsonProperty("Director")
   @Column(name = "MOVIE_DIRECTOR")
   private String diretorFilme;
 
@@ -152,12 +147,12 @@ public class Filme {
       return Objects.equals(id, filme.id);
     } else if (id == null && filme.id == null) {
       return Objects.equals(idLegado, filme.idLegado)
-              && Objects.equals(idPublico, filme.idPublico)
-              && Objects.equals(nomeFilme, filme.nomeFilme)
-              && Objects.equals(sinopseFilme, filme.sinopseFilme)
-              && Objects.equals(categoriaFilme, filme.categoriaFilme)
-              && anoFilme == filme.anoFilme
-              && Objects.equals(diretorFilme, filme.diretorFilme);
+          && Objects.equals(idPublico, filme.idPublico)
+          && Objects.equals(nomeFilme, filme.nomeFilme)
+          && Objects.equals(sinopseFilme, filme.sinopseFilme)
+          && Objects.equals(categoriaFilme, filme.categoriaFilme)
+          && anoFilme == filme.anoFilme
+          && Objects.equals(diretorFilme, filme.diretorFilme);
     } else {
       return false;
     }
@@ -169,6 +164,6 @@ public class Filme {
       return Objects.hash(id);
     }
     return Objects.hash(
-            idLegado, idPublico, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
+        idLegado, idPublico, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
   }
 }
