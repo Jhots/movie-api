@@ -1,5 +1,7 @@
 package com.pagsestagio.movieapi.service;
 
+import com.pagsestagio.movieapi.apiExterna.omdb.service.OmdbService;
+import com.pagsestagio.movieapi.apiExterna.resposta.FilmeRespostaApiExternaRetornaDadosFilme;
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV1;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
@@ -8,13 +10,12 @@ import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMens
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaListaDeFilmesOuExcecaoV1;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FilmeService {
@@ -22,9 +23,12 @@ public class FilmeService {
   private final FilmeRepository filmeRepository;
 
   @Autowired
-  public FilmeService(FilmeRepository filmeRepository) {
+  public FilmeService(FilmeRepository filmeRepository, OmdbService omdbService) {
     this.filmeRepository = filmeRepository;
+    this.omdbService = omdbService;
   }
+
+  private OmdbService omdbService;
 
   List<FilmeDTOV1> getListaDeFilmesVersaoUm() {
     List<Filme> filmesComIdLegado = filmeRepository.findAllByIdLegadoIsNotNull();
@@ -130,21 +134,46 @@ public class FilmeService {
                   + filmeExistente.get().getIdPublico()
                   + ". Faça um PUT para atualizar.");
     } else {
-      Filme filmecriado = new Filme();
-      filmecriado.setNomeFilme(filmeRequisicao.getNomeFilme());
-      filmecriado.setSinopseFilme(filmeRequisicao.getSinopseFilme());
-      filmecriado.setCategoriaFilme(filmeRequisicao.getCategoriaFilme());
-      filmecriado.setAnoFilme(filmeRequisicao.getAnoFilme());
-      filmecriado.setDiretorFilme(filmeRequisicao.getDiretorFilme());
-      filmeRepository.save(filmecriado);
+
+      FilmeRespostaApiExternaRetornaDadosFilme filmeDaApiExterna =
+          omdbService.getFilmePorNome(filmeRequisicao.getNomeFilme());
+
+      Filme filmeCriado = null;
+
+      if (filmeDaApiExterna != null && filmeDaApiExterna.nomeFilme() != null) {
+        filmeCriado =
+            new Filme(
+                null,
+                null,
+                null,
+                filmeDaApiExterna.nomeFilme(),
+                filmeDaApiExterna.sinopseFilme(),
+                filmeDaApiExterna.categoriaFilme(),
+                filmeDaApiExterna.anoFilme(),
+                filmeDaApiExterna.diretorFilme());
+      } else {
+        filmeCriado =
+            new Filme(
+                null,
+                null,
+                null,
+                filmeRequisicao.getNomeFilme(),
+                filmeRequisicao.getSinopseFilme(),
+                filmeRequisicao.getCategoriaFilme(),
+                filmeRequisicao.getAnoFilme(),
+                filmeRequisicao.getDiretorFilme());
+      }
+
+      filmeRepository.save(filmeCriado);
+
       retornoCriacaoDeFilme =
           new FilmeResultadoRetornaFilmeOuMensagem(
-              filmecriado.getIdPublico(),
-              filmecriado.getNomeFilme(),
-              filmecriado.getSinopseFilme(),
-              filmecriado.getCategoriaFilme(),
-              filmecriado.getAnoFilme(),
-              filmecriado.getDiretorFilme());
+              filmeCriado.getIdPublico(),
+              filmeCriado.getNomeFilme(),
+              filmeCriado.getSinopseFilme(),
+              filmeCriado.getCategoriaFilme(),
+              filmeCriado.getAnoFilme(),
+              filmeCriado.getDiretorFilme());
     }
 
     return retornoCriacaoDeFilme;

@@ -1,5 +1,6 @@
 package com.pagsestagio.movieapi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -146,12 +147,12 @@ public class Filme {
       return Objects.equals(id, filme.id);
     } else if (id == null && filme.id == null) {
       return Objects.equals(idLegado, filme.idLegado)
-              && Objects.equals(idPublico, filme.idPublico)
-              && Objects.equals(nomeFilme, filme.nomeFilme)
-              && Objects.equals(sinopseFilme, filme.sinopseFilme)
-              && Objects.equals(categoriaFilme, filme.categoriaFilme)
-              && anoFilme == filme.anoFilme
-              && Objects.equals(diretorFilme, filme.diretorFilme);
+          && Objects.equals(idPublico, filme.idPublico)
+          && Objects.equals(nomeFilme, filme.nomeFilme)
+          && Objects.equals(sinopseFilme, filme.sinopseFilme)
+          && Objects.equals(categoriaFilme, filme.categoriaFilme)
+          && anoFilme == filme.anoFilme
+          && Objects.equals(diretorFilme, filme.diretorFilme);
     } else {
       return false;
     }
@@ -163,6 +164,6 @@ public class Filme {
       return Objects.hash(id);
     }
     return Objects.hash(
-            idLegado, idPublico, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
+        idLegado, idPublico, nomeFilme, sinopseFilme, categoriaFilme, anoFilme, diretorFilme);
   }
 }
