@@ -12,6 +12,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
       SPRING_FLYWAY_ENABLED: "true"
       OMDB_API_KEY: ${OMDB_API_KEY}
+      SPRING_ACTIVE_PROFILE: prod
     depends_on:
       oracle-db:
         condition: service_healthy
