@@ -10,14 +10,15 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="MOVIE_OUTBOX")
+@Table(name = "MOVIE_OUTBOX")
 public class FilmeOutbox {
 
-    public FilmeOutbox(Long id, String tipoEvento, String payload, LocalDateTime criadoEm, boolean processado) {
+    public FilmeOutbox(Long id, String key, String payload, LocalDateTime criadoEm, String topicoDestino, boolean processado) {
         this.id = id;
-        this.tipoEvento = tipoEvento;
+        this.key = key;
         this.payload = payload;
         this.criadoEm = criadoEm;
+        this.topicoDestino = topicoDestino;
         this.processado = processado;
     }
 
@@ -31,14 +32,17 @@ public class FilmeOutbox {
     @Column(name = "OUTBOX_ID")
     private Long id;
 
-    @Column(name = "OUTBOX_EVENT_TYPE")
-    private String tipoEvento;
+    @Column(name = "OUTBOX_KEY")
+    private String key;
 
     @Column(name = "OUTBOX_PAYLOAD")
     private String payload;
 
     @Column(name = "OUTBOX_CREATED_AT")
     private LocalDateTime criadoEm;
+
+    @Column(name = "OUTBOX_TARGET_TOPIC")
+    private String topicoDestino;
 
     @Column(name = "OUTBOX_PROCESSED")
     private boolean processado;
@@ -52,12 +56,12 @@ public class FilmeOutbox {
         this.id = id;
     }
 
-    public String getTipoEvento() {
-        return tipoEvento;
+    public String getKey() {
+        return key;
     }
 
-    public void setTipoEvento(String tipoEvento) {
-        this.tipoEvento = tipoEvento;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getPayload() {
@@ -74,6 +78,14 @@ public class FilmeOutbox {
 
     public void setCriadoEm(LocalDateTime criadoEm) {
         this.criadoEm = criadoEm;
+    }
+
+    public String getTopicoDestino() {
+        return topicoDestino;
+    }
+
+    public void setTopicoDestino(String topicoDestino) {
+        this.topicoDestino = topicoDestino;
     }
 
     public boolean isProcessado() {
