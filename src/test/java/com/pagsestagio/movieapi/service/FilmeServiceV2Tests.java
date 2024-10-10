@@ -8,6 +8,7 @@ import com.pagsestagio.movieapi.apiExterna.omdb.service.OmdbService;
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
+import com.pagsestagio.movieapi.repository.FilmeOutboxRepository;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,7 +22,8 @@ class FilmeServiceV2Tests {
 
   private FilmeRepository filmeRepository = Mockito.mock(FilmeRepository.class);
   private OmdbService omdbService = Mockito.mock(OmdbService.class);
-  private FilmeService service = new FilmeService(filmeRepository, omdbService);
+  private FilmeOutboxRepository filmeOutboxRepository = Mockito.mock(FilmeOutboxRepository.class);
+  private FilmeService service = new FilmeService(filmeRepository, omdbService, filmeOutboxRepository);
 
   @Test
   public void devePegarUmFilmePorIdQuandoOFilmeExiste() {
