@@ -1,10 +1,10 @@
 package com.pagsestagio.movieapi.controller;
 
+import com.pagsestagio.movieapi.controller.resposta.FilmeResposta;
 import com.pagsestagio.movieapi.controller.resposta.FilmeRespostaRetornaFilmeOuMensagem;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
-import com.pagsestagio.movieapi.service.FilmeService;
-import com.pagsestagio.movieapi.controller.resposta.FilmeResposta;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
+import com.pagsestagio.movieapi.service.FilmeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
