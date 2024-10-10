@@ -24,8 +24,11 @@ import java.util.UUID;
 public class FilmeService {
 
     private final FilmeRepository filmeRepository;
+
+    //Alteração feita aqui
     private final FilmeOutboxRepository filmeOutboxRepository;
 
+    //Alteração feita aqui
     @Autowired
     public FilmeService(FilmeRepository filmeRepository, OmdbService omdbService, FilmeOutboxRepository filmeOutboxRepository) {
         this.filmeRepository = filmeRepository;
@@ -122,6 +125,7 @@ public class FilmeService {
         return retornoCriacaoDeFilme;
     }
 
+    //Alteração feita aqui
     @Transactional
     public FilmeResultadoRetornaFilmeOuMensagem criarFilmeV2(FilmeDTOV2 filmeRequisicao) {
         FilmeResultadoRetornaFilmeOuMensagem retornoCriacaoDeFilme = null;

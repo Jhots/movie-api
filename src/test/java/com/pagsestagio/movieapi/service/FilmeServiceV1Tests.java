@@ -22,7 +22,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class FilmeServiceV1Tests {
   private FilmeRepository filmeRepository = Mockito.mock(FilmeRepository.class);
   private OmdbService omdbService = Mockito.mock(OmdbService.class);
+
+  //Alteração feita aqui
   private FilmeOutboxRepository filmeOutboxRepository = Mockito.mock(FilmeOutboxRepository.class);
+
+  //Alteração feita aqui
   private FilmeService service = new FilmeService(filmeRepository, omdbService, filmeOutboxRepository);
 
   @Test
