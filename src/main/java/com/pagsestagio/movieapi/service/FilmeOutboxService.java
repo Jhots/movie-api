@@ -3,7 +3,7 @@ package com.pagsestagio.movieapi.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeOutbox;
-import com.pagsestagio.movieapi.model.FilmeOutboxDTO;
+import com.pagsestagio.movieapi.model.FilmeOutboxPayload;
 import com.pagsestagio.movieapi.repository.FilmeOutboxRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class FilmeOutboxService {
             FilmeOutbox filmeOutbox = new FilmeOutbox();
             filmeOutbox.setKey(filme.getIdPublico().toString());
 
-            FilmeOutboxDTO objeto = new FilmeOutboxDTO(filme.getNomeFilme());
+            FilmeOutboxPayload objeto = new FilmeOutboxPayload(filme.getNomeFilme());
             String payload = objectMapper.writeValueAsString(objeto);
             filmeOutbox.setPayload(payload);
 

@@ -284,4 +284,22 @@ class FilmeServiceV2Tests {
         resultadoFilmeAtualizado.mensagemStatus(),
         "Não deve haver erro ao atualizar um filme existente.");
   }
+
+  @Test
+  public void deveChamarOutboxQuandoFilmeEhCriado() {
+    FilmeDTOV2 novoFilme = new FilmeDTOV2(null, null, null, "Matrix");
+
+    Mockito.when(filmeRepository.findByNomeFilme("Matrix")).thenReturn(Optional.empty());
+    FilmeResultadoRetornaFilmeOuMensagem resultadoFilmeCriado = service.criarFilmeV2(novoFilme);
+    Mockito.verify(filmeRepository).save(Mockito.any(Filme.class));
+    Mockito.verify(filmeOutboxService).salvaEventoNaTabelaDeOutbox(Mockito.any(Filme.class));
+
+    assertNotNull(
+            resultadoFilmeCriado.idpublico(), "O id do filme deve ser retornado após a criação.");
+    assertEquals(
+            "Matrix", resultadoFilmeCriado.nomeFilme(), "O nome do filme retornado deve ser 'Matrix'.");
+    assertNull(
+            resultadoFilmeCriado.mensagemStatus(),
+            "Não deve haver erro ao criar um novo filme com identificador válido.");
+  }
 }
