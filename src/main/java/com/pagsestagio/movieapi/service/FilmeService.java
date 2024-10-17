@@ -1,20 +1,16 @@
 package com.pagsestagio.movieapi.service;
 
-import com.pagsestagio.movieapi.apiExterna.omdb.service.OmdbService;
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV1;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
-import com.pagsestagio.movieapi.model.FilmeOutbox;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuExcecaoV1;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaListaDeFilmesOuExcecaoV1;
-import com.pagsestagio.movieapi.repository.FilmeOutboxRepository;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,19 +20,14 @@ import java.util.UUID;
 public class FilmeService {
 
     private final FilmeRepository filmeRepository;
+    private final FilmeOutboxService filmeOutboxService;
 
-    //Alteração feita aqui
-    private final FilmeOutboxRepository filmeOutboxRepository;
 
-    //Alteração feita aqui
     @Autowired
-    public FilmeService(FilmeRepository filmeRepository, OmdbService omdbService, FilmeOutboxRepository filmeOutboxRepository) {
+    public FilmeService(FilmeRepository filmeRepository, FilmeOutboxService filmeOutboxService) {
         this.filmeRepository = filmeRepository;
-        this.omdbService = omdbService;
-        this.filmeOutboxRepository = filmeOutboxRepository;
+        this.filmeOutboxService = filmeOutboxService;
     }
-
-    private OmdbService omdbService;
 
     List<FilmeDTOV1> getListaDeFilmesVersaoUm() {
         List<Filme> filmesComIdLegado = filmeRepository.findAllByIdLegadoIsNotNull();
@@ -157,14 +148,8 @@ public class FilmeService {
 
             filmeRepository.save(filmeCriado);
 
-            FilmeOutbox filmeOutbox = new FilmeOutbox();
-            filmeOutbox.setKey(filmeCriado.getIdPublico().toString());
-            filmeOutbox.setPayload(filmeCriado.getNomeFilme());
-            filmeOutbox.setCriadoEm(LocalDateTime.now());
-            filmeOutbox.setTopicoDestino("movie-api.informacoes-adicionais-filme");
-            filmeOutbox.setProcessado(false);
 
-            filmeOutboxRepository.save(filmeOutbox);
+            filmeOutboxService.salvaEventoNaTabelaDeOutbox(filmeCriado);
 
 
             retornoCriacaoDeFilme =

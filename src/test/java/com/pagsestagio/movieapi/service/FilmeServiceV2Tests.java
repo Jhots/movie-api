@@ -1,33 +1,27 @@
 package com.pagsestagio.movieapi.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-import com.pagsestagio.movieapi.apiExterna.omdb.service.OmdbService;
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
-import com.pagsestagio.movieapi.repository.FilmeOutboxRepository;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
-import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 @ExtendWith(MockitoExtension.class)
 class FilmeServiceV2Tests {
 
   private FilmeRepository filmeRepository = Mockito.mock(FilmeRepository.class);
-  private OmdbService omdbService = Mockito.mock(OmdbService.class);
-
-  //Alteração feita aqui
-  private FilmeOutboxRepository filmeOutboxRepository = Mockito.mock(FilmeOutboxRepository.class);
-
-  //Alteração feita aqui
-  private FilmeService service = new FilmeService(filmeRepository, omdbService, filmeOutboxRepository);
+  private FilmeOutboxService filmeOutboxService = Mockito.mock(FilmeOutboxService.class);
+  private FilmeService service = new FilmeService(filmeRepository, filmeOutboxService);
 
   @Test
   public void devePegarUmFilmePorIdQuandoOFilmeExiste() {
