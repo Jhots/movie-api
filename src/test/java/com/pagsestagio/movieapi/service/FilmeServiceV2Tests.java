@@ -1,27 +1,27 @@
 package com.pagsestagio.movieapi.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-import com.pagsestagio.movieapi.apiExterna.omdb.service.OmdbService;
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
 import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaFilmeOuMensagem;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
-import java.util.Optional;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 @ExtendWith(MockitoExtension.class)
 class FilmeServiceV2Tests {
 
   private FilmeRepository filmeRepository = Mockito.mock(FilmeRepository.class);
-  private OmdbService omdbService = Mockito.mock(OmdbService.class);
-  private FilmeService service = new FilmeService(filmeRepository, omdbService);
+  private FilmeOutboxService filmeOutboxService = Mockito.mock(FilmeOutboxService.class);
+  private FilmeService service = new FilmeService(filmeRepository, filmeOutboxService);
 
   @Test
   public void devePegarUmFilmePorIdQuandoOFilmeExiste() {
@@ -283,5 +283,23 @@ class FilmeServiceV2Tests {
     assertNull(
         resultadoFilmeAtualizado.mensagemStatus(),
         "Não deve haver erro ao atualizar um filme existente.");
+  }
+
+  @Test
+  public void deveChamarOutboxQuandoFilmeEhCriado() {
+    FilmeDTOV2 novoFilme = new FilmeDTOV2(null, null, null, "Matrix");
+
+    Mockito.when(filmeRepository.findByNomeFilme("Matrix")).thenReturn(Optional.empty());
+    FilmeResultadoRetornaFilmeOuMensagem resultadoFilmeCriado = service.criarFilmeV2(novoFilme);
+    Mockito.verify(filmeRepository).save(Mockito.any(Filme.class));
+    Mockito.verify(filmeOutboxService).salvaEventoNaTabelaDeOutbox(Mockito.any(Filme.class));
+
+    assertNotNull(
+            resultadoFilmeCriado.idpublico(), "O id do filme deve ser retornado após a criação.");
+    assertEquals(
+            "Matrix", resultadoFilmeCriado.nomeFilme(), "O nome do filme retornado deve ser 'Matrix'.");
+    assertNull(
+            resultadoFilmeCriado.mensagemStatus(),
+            "Não deve haver erro ao criar um novo filme com identificador válido.");
   }
 }

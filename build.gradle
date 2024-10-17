@@ -26,7 +26,10 @@ dependencies {
     testImplementation 'org.mock-server:mockserver-netty:5.15.0'
     testImplementation 'org.mock-server:mockserver-client-java:5.15.0'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 }
+
+
 
 tasks.named('test') {
     useJUnitPlatform()
