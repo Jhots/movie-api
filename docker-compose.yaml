@@ -1,4 +1,7 @@
-version: '3.8'
+networks:
+  movie-api:
+    driver: bridge
+
 services:
   movie-api:
     container_name: movie-api
@@ -16,6 +19,8 @@ services:
     depends_on:
       oracle-db:
         condition: service_healthy
+    networks:
+      - movie-api
 
   oracle-db:
     container_name: banco-oracle
@@ -32,6 +37,8 @@ services:
       interval: 2s
       timeout: 5s
       retries: 10
+    networks:
+      - movie-api
 
   zookeeper:
     image: confluentinc/cp-zookeeper:5.5.1
@@ -42,6 +49,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - movie-api
 
   broker:
     image: confluentinc/cp-kafka:5.5.1
@@ -63,6 +72,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_JMX_PORT: 9101
+    networks:
+      - movie-api
 
   schema-registry:
     image: confluentinc/cp-schema-registry:5.5.1
@@ -76,6 +87,8 @@ services:
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+    networks:
+      - movie-api
 
   rest-proxy:
     image: confluentinc/cp-kafka-rest:5.5.1
@@ -92,6 +105,8 @@ services:
       KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+    networks:
+      - movie-api
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:5.4.0
@@ -112,3 +127,72 @@ services:
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
+    networks:
+      - movie-api
+
+  connect:
+    image: confluentinc/cp-kafka-connect-base:6.2.1
+    hostname: kafka-connect.docker
+    container_name: kafka-connect
+    depends_on:
+      - broker
+      - schema-registry
+    links:
+      - broker
+      - schema-registry
+    ports:
+      - "8083:8083"
+    environment:
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,address=*:5005,server=y,suspend=n
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      CONNECT_BOOTSTRAP_SERVERS: "broker:29092"
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: kafka-connect
+      CONNECT_CONFIG_STORAGE_TOPIC: kafka-connect.configs
+      CONNECT_OFFSET_STORAGE_TOPIC: kafka-connect.offsets
+      CONNECT_STATUS_STORAGE_TOPIC: kafka-connect.status
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
+      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      #  ---------------
+      CONNECT_PLUGIN_PATH: /usr/share/java,/usr/share/confluent-hub-components,/data/connect-jars
+    # If you want to use the Confluent Hub installer to d/l component, but make them available
+    # when running this offline, spin up the stack once and then run :
+    #   docker cp kafka-connect:/usr/share/confluent-hub-components ./data/connect-jars
+    volumes:
+      - ./docker/kafka-connector/data:/data
+      - ./docker/kafka-connector/scripts:/scripts
+      - ./docker/kafka-connector/files:/data/connect-jars
+    # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
+    command:
+      - bash
+      - -c
+      - |
+        rm /usr/share/java/cp-base-new/slf4j-log4j12-*.jar
+        echo "Installing Connector"
+        confluent-hub install --no-prompt streamthoughts/kafka-connect-file-pulse:2.7.0 && \
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.2.6 && \
+        confluent-hub install --no-prompt confluentinc/kafka-connect-s3:10.0.4 && \
+        confluent-hub install --no-prompt confluentinc/connect-transforms:1.4.2 && \
+        confluent-hub install --no-prompt jcustenborder/kafka-connect-transform-common:0.1.0.54
+        #
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run &
+        echo "Waiting for Kafka Connect to start listening on kafka-connect ⏳"
+        while [ $$(curl -s -o /dev/null -w %{http_code} http://kafka-connect:8083/connectors) -eq 000 ] ; do
+        echo -e $$(date) " Kafka Connect listener HTTP state: " $$(curl -s -o /dev/null -w %{http_code} http://kafka-connect:8083/connectors) " (waiting for 200)"
+        sleep 5
+        done
+        nc -vz kafka-connect 8083
+        echo -e "\n--\n+> Creating Kafka Connector(s)"
+        chmod +x /scripts/create-connectors.sh
+        /scripts/create-connectors.sh  # Note: This script is stored externally from container
+        #
+        sleep infinity
+    networks:
+      - movie-api
