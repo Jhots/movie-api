@@ -36,7 +36,7 @@ services:
       test: [ "CMD", "/opt/oracle/healthcheck.sh" ]
       interval: 2s
       timeout: 5s
-      retries: 10
+      retries: 60
     networks:
       - movie-api
 
@@ -175,7 +175,7 @@ services:
       - |
         rm /usr/share/java/cp-base-new/slf4j-log4j12-*.jar
         echo "Installing Connector"
-        confluent-hub install --no-prompt streamthoughts/kafka-connect-file-pulse:2.7.0 && \
+        confluent-hub install --no-prompt /data/connect-jars/streamthoughts-kafka-connect-file-pulse-2.7.0.zip && \
         confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.2.6 && \
         confluent-hub install --no-prompt confluentinc/kafka-connect-s3:10.0.4 && \
         confluent-hub install --no-prompt confluentinc/connect-transforms:1.4.2 && \
