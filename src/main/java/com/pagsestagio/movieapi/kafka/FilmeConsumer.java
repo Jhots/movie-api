@@ -27,11 +27,11 @@ public class FilmeConsumer {
         this.filmeRepository = filmeRepository;
     }
 
-    @KafkaListener(topics = "movie-api.informacoes-adicionais-filmeMOVIE_OUTBOX")
+    @KafkaListener(topics = "movie-api.informacoes-adicionais-filmeMOVIE_OUTBOX", groupId = "${spring.kafka.consumer.group-id}")
     public void consomeMensagem(@Payload String mensagem, Acknowledgment ack) throws JsonProcessingException {
         System.out.println("Mensagem recebida: " + mensagem);
 
-        var filmeOutbox =  objectMapper.readValue(mensagem, FilmeOutboxPayload.class);
+        var filmeOutbox = objectMapper.readValue(mensagem, FilmeOutboxPayload.class);
 
         try {
             FilmeRespostaApiExternaRetornaDadosFilme filmeDaApiExterna = omdbService.getFilmePorNome(filmeOutbox.nomeFilme());
