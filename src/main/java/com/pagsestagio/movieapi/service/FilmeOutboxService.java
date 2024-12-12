@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Service
 public class FilmeOutboxService {
 
-    private static final String TOPIC_DESTINO = "movie-api.informacoes-adicionais-filmeMOVIE_OUTBOX";
+    private static final String TOPIC_DESTINO = "movie-api.informacoes-adicionais-filme";
 
     private final FilmeOutboxRepository filmeOutboxRepository;
     private final ObjectMapper objectMapper;
