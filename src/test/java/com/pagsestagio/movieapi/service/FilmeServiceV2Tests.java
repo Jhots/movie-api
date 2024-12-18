@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -19,13 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
-@EmbeddedKafka(partitions = 1, topics = { "movie-api.filme-pesquisado" })
 class FilmeServiceV2Tests {
 
   private FilmeRepository filmeRepository = Mockito.mock(FilmeRepository.class);
   private FilmeOutboxService filmeOutboxService = Mockito.mock(FilmeOutboxService.class);
-  private KafkaTemplate<String, String> kafkaTemplate = Mockito.mock(KafkaTemplate.class);
-  private FilmeService service = new FilmeService(filmeRepository, filmeOutboxService, kafkaTemplate);
+  private FilmeService service = new FilmeService(filmeRepository, filmeOutboxService);
 
   @Test
   public void devePegarUmFilmePorIdQuandoOFilmeExiste() {

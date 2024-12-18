@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -22,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FilmeServiceV1Tests {
   private FilmeRepository filmeRepository = Mockito.mock(FilmeRepository.class);
   private FilmeOutboxService filmeOutboxService = Mockito.mock(FilmeOutboxService.class);
-  private KafkaTemplate<String, String> kafkaTemplate;
-  private FilmeService service = new FilmeService(filmeRepository, filmeOutboxService, kafkaTemplate);
+  private FilmeService service = new FilmeService(filmeRepository, filmeOutboxService);
 
   @Test
   public void devePegarUmFilmePorIdQuandoOFilmeExiste() {

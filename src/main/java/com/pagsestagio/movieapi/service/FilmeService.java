@@ -1,7 +1,5 @@
 package com.pagsestagio.movieapi.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pagsestagio.movieapi.model.EventoFilmePesquisado;
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeDTOV1;
 import com.pagsestagio.movieapi.model.FilmeDTOV2;
@@ -11,7 +9,6 @@ import com.pagsestagio.movieapi.model.resultado.FilmeResultadoRetornaListaDeFilm
 import com.pagsestagio.movieapi.repository.FilmeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,15 +21,12 @@ public class FilmeService {
 
     private final FilmeRepository filmeRepository;
     private final FilmeOutboxService filmeOutboxService;
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    private static final String TOPIC_NAME = "movie-api.filme-pesquisado";
 
     @Autowired
-    public FilmeService(FilmeRepository filmeRepository, FilmeOutboxService filmeOutboxService, KafkaTemplate<String, String> kafkaTemplate) {
+    public FilmeService(FilmeRepository filmeRepository, FilmeOutboxService filmeOutboxService) {
         this.filmeRepository = filmeRepository;
         this.filmeOutboxService = filmeOutboxService;
-        this.kafkaTemplate = kafkaTemplate;
     }
 
     List<FilmeDTOV1> getListaDeFilmesVersaoUm() {
@@ -81,14 +75,6 @@ public class FilmeService {
                             filmeprocurado.getCategoriaFilme(),
                             filmeprocurado.getAnoFilme(),
                             filmeprocurado.getDiretorFilme());
-
-            EventoFilmePesquisado evento = new EventoFilmePesquisado(
-                    filmeprocurado.getNomeFilme(),
-                    filmeprocurado.getIdPublico().toString()
-            );
-
-            kafkaTemplate.send(TOPIC_NAME, evento.idPublico(), EventoFilmePesquisadotoJson(evento));
-
         } else {
             retornoDoFilmePorIdentificador =
                     new FilmeResultadoRetornaFilmeOuMensagem(
@@ -292,15 +278,5 @@ public class FilmeService {
         }
 
         return retornoDeletarFilme;
-    }
-
-
-    private String EventoFilmePesquisadotoJson(EventoFilmePesquisado evento) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(evento);
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao serializar evento", e);
-        }
     }
 }
