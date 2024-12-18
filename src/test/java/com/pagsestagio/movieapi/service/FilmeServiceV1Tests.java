@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -21,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class FilmeServiceV1Tests {
   private FilmeRepository filmeRepository = Mockito.mock(FilmeRepository.class);
   private FilmeOutboxService filmeOutboxService = Mockito.mock(FilmeOutboxService.class);
-  private FilmeService service = new FilmeService(filmeRepository, filmeOutboxService);
+  private KafkaTemplate<String, String> kafkaTemplate;
+  private FilmeService service = new FilmeService(filmeRepository, filmeOutboxService, kafkaTemplate);
 
   @Test
   public void devePegarUmFilmePorIdQuandoOFilmeExiste() {
@@ -36,11 +38,11 @@ class FilmeServiceV1Tests {
 
     assertNotNull(resultadoFilmePesquisado.id(), "O id deve ser retornado quando o filme existe.");
     assertNull(
-        resultadoFilmePesquisado.mensagemStatus(), "Não deve haver erro quando o filme existe.");
+            resultadoFilmePesquisado.mensagemStatus(), "Não deve haver erro quando o filme existe.");
     assertEquals(
-        "Matrix",
-        resultadoFilmePesquisado.nomeFilme(),
-        "O nome do filme retornado deve ser 'Matrix'.");
+            "Matrix",
+            resultadoFilmePesquisado.nomeFilme(),
+            "O nome do filme retornado deve ser 'Matrix'.");
   }
 
   @Test
@@ -51,10 +53,10 @@ class FilmeServiceV1Tests {
 
     assertNull(resultadoFilmePesquisado.id(), "O id do filme deve ser nulo quando não existe.");
     assertNull(
-        resultadoFilmePesquisado.nomeFilme(), "O nome do filme deve ser nulo quando não existe.");
+            resultadoFilmePesquisado.nomeFilme(), "O nome do filme deve ser nulo quando não existe.");
     assertNotNull(
-        resultadoFilmePesquisado.mensagemStatus(),
-        "Deve haver uma mensagem quando o filme não existe.");
+            resultadoFilmePesquisado.mensagemStatus(),
+            "Deve haver uma mensagem quando o filme não existe.");
   }
 
   @Test
@@ -69,24 +71,24 @@ class FilmeServiceV1Tests {
     filmeCriado.setNomeFilme("Matrix");
     Mockito.when(filmeRepository.save(filmeCriado)).thenReturn(filmeCriado);
     Mockito.when(filmeRepository.findAllByIdLegadoIsNotNull())
-        .thenReturn(Collections.singletonList(filmeCriado));
+            .thenReturn(Collections.singletonList(filmeCriado));
 
     var resultadoFilmeCriado = service.criarFilmeV1(novoFilme);
 
     assertNotNull(
-        resultadoFilmeCriado.listaDeFilmes(),
-        "A lista de filmes não deve ser nula após a criação de um novo filme.");
+            resultadoFilmeCriado.listaDeFilmes(),
+            "A lista de filmes não deve ser nula após a criação de um novo filme.");
     assertEquals(
-        1,
-        resultadoFilmeCriado.listaDeFilmes().size(),
-        "A lista de filmes deve conter exatamente um filme.");
+            1,
+            resultadoFilmeCriado.listaDeFilmes().size(),
+            "A lista de filmes deve conter exatamente um filme.");
     assertNull(
-        resultadoFilmeCriado.mensagemStatus(),
-        "Não deve haver erro ao criar um novo filme com identificador válido.");
+            resultadoFilmeCriado.mensagemStatus(),
+            "Não deve haver erro ao criar um novo filme com identificador válido.");
     assertEquals(
-        "Matrix",
-        resultadoFilmeCriado.listaDeFilmes().get(0).getNomeFilme(),
-        "O nome do filme retornado deve ser 'Matrix'.");
+            "Matrix",
+            resultadoFilmeCriado.listaDeFilmes().get(0).getNomeFilme(),
+            "O nome do filme retornado deve ser 'Matrix'.");
   }
 
   @Test
@@ -97,16 +99,16 @@ class FilmeServiceV1Tests {
     filmeExistente.setNomeFilme("Matrix");
 
     Mockito.when(filmeRepository.findByNomeFilme("Star Wars"))
-        .thenReturn(Optional.of(filmeExistente));
+            .thenReturn(Optional.of(filmeExistente));
 
     var resultadoFilmeCriado = service.criarFilmeV1(novoFilme);
 
     assertNull(
-        resultadoFilmeCriado.listaDeFilmes(),
-        "A lista de filmes deve ser nula se o filme não puder ser criado.");
+            resultadoFilmeCriado.listaDeFilmes(),
+            "A lista de filmes deve ser nula se o filme não puder ser criado.");
     assertNotNull(
-        resultadoFilmeCriado.mensagemStatus(),
-        "Deve haver erro ao tentar criar um filme com identificador já existente.");
+            resultadoFilmeCriado.mensagemStatus(),
+            "Deve haver erro ao tentar criar um filme com identificador já existente.");
   }
 
   @Test
@@ -119,20 +121,20 @@ class FilmeServiceV1Tests {
     Mockito.when(filmeRepository.findByIdLegado(1)).thenReturn(Optional.of(filmeExistente));
     Mockito.when(filmeRepository.save(filmeExistente)).thenReturn(filmeExistente);
     Mockito.when(filmeRepository.findAllByIdLegadoIsNotNull())
-        .thenReturn(Collections.singletonList(filmeExistente));
+            .thenReturn(Collections.singletonList(filmeExistente));
 
     var resultadoFilmeAtualizado = service.atualizarFilmeV1(filmeAtualizado);
 
     assertNotNull(
-        resultadoFilmeAtualizado.listaDeFilmes(),
-        "A lista de filmes não deve ser nula após a atualização do filme.");
+            resultadoFilmeAtualizado.listaDeFilmes(),
+            "A lista de filmes não deve ser nula após a atualização do filme.");
     assertEquals(
-        "Matrix Reloaded",
-        resultadoFilmeAtualizado.listaDeFilmes().get(0).getNomeFilme(),
-        "O nome do filme deve ser 'Matrix Reloaded'.");
+            "Matrix Reloaded",
+            resultadoFilmeAtualizado.listaDeFilmes().get(0).getNomeFilme(),
+            "O nome do filme deve ser 'Matrix Reloaded'.");
     assertNull(
-        resultadoFilmeAtualizado.mensagemStatus(),
-        "Não deve haver erro ao atualizar um filme existente.");
+            resultadoFilmeAtualizado.mensagemStatus(),
+            "Não deve haver erro ao atualizar um filme existente.");
   }
 
   @Test
@@ -144,11 +146,11 @@ class FilmeServiceV1Tests {
     var resultadoFilmeAtualizado = service.atualizarFilmeV1(filmeNaoExistente);
 
     assertNull(
-        resultadoFilmeAtualizado.listaDeFilmes(),
-        "A lista de filmes deve ser nula se o filme não puder ser atualizado.");
+            resultadoFilmeAtualizado.listaDeFilmes(),
+            "A lista de filmes deve ser nula se o filme não puder ser atualizado.");
     assertNotNull(
-        resultadoFilmeAtualizado.mensagemStatus(),
-        "Deve haver erro ao tentar atualizar um filme com identificador inexistente.");
+            resultadoFilmeAtualizado.mensagemStatus(),
+            "Deve haver erro ao tentar atualizar um filme com identificador inexistente.");
   }
 
   @Test
@@ -162,14 +164,14 @@ class FilmeServiceV1Tests {
     var resultadoSolicitacaoDeletarFilme = service.deletarFilmePeloIdV1(1);
 
     assertNotNull(
-        resultadoSolicitacaoDeletarFilme.listaDeFilmes(),
-        "A lista de filmes não deve ser nula após a exclusão do filme.");
+            resultadoSolicitacaoDeletarFilme.listaDeFilmes(),
+            "A lista de filmes não deve ser nula após a exclusão do filme.");
     assertTrue(
-        resultadoSolicitacaoDeletarFilme.listaDeFilmes().isEmpty(),
-        "A lista de filmes deve estar vazia após a exclusão do filme.");
+            resultadoSolicitacaoDeletarFilme.listaDeFilmes().isEmpty(),
+            "A lista de filmes deve estar vazia após a exclusão do filme.");
     assertNull(
-        resultadoSolicitacaoDeletarFilme.mensagemStatus(),
-        "Não deve haver erro ao excluir um filme existente.");
+            resultadoSolicitacaoDeletarFilme.mensagemStatus(),
+            "Não deve haver erro ao excluir um filme existente.");
   }
 
   @Test
@@ -179,10 +181,10 @@ class FilmeServiceV1Tests {
     var resultadoSolicitacaoDeletarFilme = service.deletarFilmePeloIdV1(1);
 
     assertNull(
-        resultadoSolicitacaoDeletarFilme.listaDeFilmes(),
-        "A lista de filmes deve ser nula se o filme não puder ser excluído.");
+            resultadoSolicitacaoDeletarFilme.listaDeFilmes(),
+            "A lista de filmes deve ser nula se o filme não puder ser excluído.");
     assertNotNull(
-        resultadoSolicitacaoDeletarFilme.mensagemStatus(),
-        "Deve haver erro ao tentar excluir um filme com identificador inexistente.");
+            resultadoSolicitacaoDeletarFilme.mensagemStatus(),
+            "Deve haver erro ao tentar excluir um filme com identificador inexistente.");
   }
 }
