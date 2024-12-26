@@ -7,6 +7,8 @@ import com.pagsestagio.movieapi.apiExterna.resposta.FilmeRespostaApiExternaRetor
 import com.pagsestagio.movieapi.model.Filme;
 import com.pagsestagio.movieapi.model.FilmeOutboxPayload;
 import com.pagsestagio.movieapi.repository.FilmeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -15,21 +17,23 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class FilmeConsumer {
+public class InformacoesAdicionaisFilmeConsumer {
 
     private final OmdbService omdbService;
     private final FilmeRepository filmeRepository;
+    private final ObjectMapper objectMapper;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    private static final Logger logger = LoggerFactory.getLogger(InformacoesAdicionaisFilmeConsumer.class);
 
-    public FilmeConsumer(OmdbService omdbService, FilmeRepository filmeRepository) {
+    public InformacoesAdicionaisFilmeConsumer(OmdbService omdbService, FilmeRepository filmeRepository, ObjectMapper objectMapper) {
         this.omdbService = omdbService;
         this.filmeRepository = filmeRepository;
+        this.objectMapper = objectMapper;
     }
 
     @KafkaListener(topics = "movie-api.informacoes-adicionais-filmeMOVIE_OUTBOX", groupId = "${spring.kafka.consumer.group-id}")
     public void consomeMensagem(@Payload String mensagem, Acknowledgment ack) throws JsonProcessingException {
-        System.out.println("Mensagem recebida: " + mensagem);
+        logger.info("Mensagem recebida: " + mensagem);
 
         var filmeOutbox = objectMapper.readValue(mensagem, FilmeOutboxPayload.class);
 
@@ -48,16 +52,15 @@ public class FilmeConsumer {
 
                 filmeRepository.save(filme);
 
-                //Trocar por logger
-                System.out.println("Filme atualizado com sucesso: " + filme.getNomeFilme());
+                logger.info("Filme atualizado com sucesso: " + filme.getNomeFilme());
             } else {
-                System.err.println("Filme não encontrado no banco: " + mensagem);
+                logger.warn("Filme não encontrado no banco: " + mensagem);
             }
 
             ack.acknowledge();
 
         } catch (Exception e) {
-            System.err.println("Erro ao processar mensagem: " + mensagem);
+            logger.error("Erro ao processar mensagem: " + mensagem);
             e.printStackTrace();
 
         }
