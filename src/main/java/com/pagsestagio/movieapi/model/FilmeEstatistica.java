@@ -35,6 +35,10 @@ public class FilmeEstatistica {
 
     }
 
+    public void incrementarContador() {
+        contadorBuscas = contadorBuscas + 1;
+    }
+
     public UUID getIdPublico() {
         return idPublico;
     }

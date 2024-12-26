@@ -42,7 +42,7 @@ public class FilmePesquisadoConsumer {
 
             if (filmeEstatisticaOptional.isPresent()) {
                 FilmeEstatistica estatistica = filmeEstatisticaOptional.get();
-                estatistica.setContadorBuscas(estatistica.getContadorBuscas() + 1);
+                estatistica.incrementarContador();
                 filmeEstatisticaRepository.save(estatistica);
                 logger.info("Contador incrementado para o filme: {} (ID: {})", nomeFilme, idPublico);
             } else {

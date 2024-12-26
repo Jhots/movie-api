@@ -21,13 +21,14 @@ public class InformacoesAdicionaisFilmeConsumer {
 
     private final OmdbService omdbService;
     private final FilmeRepository filmeRepository;
+    private final ObjectMapper objectMapper;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = LoggerFactory.getLogger(InformacoesAdicionaisFilmeConsumer.class);
 
-    public InformacoesAdicionaisFilmeConsumer(OmdbService omdbService, FilmeRepository filmeRepository) {
+    public InformacoesAdicionaisFilmeConsumer(OmdbService omdbService, FilmeRepository filmeRepository, ObjectMapper objectMapper) {
         this.omdbService = omdbService;
         this.filmeRepository = filmeRepository;
+        this.objectMapper = objectMapper;
     }
 
     @KafkaListener(topics = "movie-api.informacoes-adicionais-filmeMOVIE_OUTBOX", groupId = "${spring.kafka.consumer.group-id}")
