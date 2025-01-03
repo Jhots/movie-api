@@ -23,6 +23,7 @@ public class UsuarioController {
   @PostMapping("/login")
   public ResponseEntity<UsuarioResposta> autenticarUsuario(
       @RequestBody LoginUsuarioDTO loginUsuarioDTO) {
+
     UsuarioRespostaRetornaTokenOuMensagem retornoService =
         usuarioService.autenticarUsuario(loginUsuarioDTO);
 
@@ -35,7 +36,7 @@ public class UsuarioController {
     } else {
       respostaRequisicao =
           ResponseEntity.status(HttpStatus.BAD_REQUEST)
-              .body(new UsuarioRespostaRetornaUsuarioOuMensagem(retornoService.mensagem()));
+              .body(new UsuarioRespostaRetornaTokenOuMensagem(null, retornoService.mensagem()));
     }
 
     return respostaRequisicao;

@@ -2,14 +2,16 @@ package com.pagsestagio.movieapi.service;
 
 import com.pagsestagio.movieapi.controller.resposta.UsuarioRespostaRetornaTokenOuMensagem;
 import com.pagsestagio.movieapi.controller.resposta.UsuarioRespostaRetornaUsuarioOuMensagem;
-import com.pagsestagio.movieapi.model.*;
+import com.pagsestagio.movieapi.model.CriacaoUsuarioDTO;
+import com.pagsestagio.movieapi.model.Funcao;
+import com.pagsestagio.movieapi.model.LoginUsuarioDTO;
+import com.pagsestagio.movieapi.model.Usuario;
 import com.pagsestagio.movieapi.repository.UsuarioRepository;
 import com.pagsestagio.movieapi.security.authentication.JwtTokenService;
 import com.pagsestagio.movieapi.security.config.SecurityConfiguration;
 import com.pagsestagio.movieapi.security.userDetails.UserDetailsImpl;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,13 +20,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class UsuarioService {
 
-  @Autowired private AuthenticationManager authenticationManager;
+  private AuthenticationManager authenticationManager;
 
-  @Autowired private JwtTokenService jwtTokenService;
+  private JwtTokenService jwtTokenService;
 
-  @Autowired private UsuarioRepository usuarioRepository;
+  private UsuarioRepository usuarioRepository;
 
-  @Autowired private SecurityConfiguration securityConfiguration;
+  private SecurityConfiguration securityConfiguration;
+
+  public UsuarioService(
+      AuthenticationManager authenticationManager,
+      JwtTokenService jwtTokenService,
+      UsuarioRepository usuarioRepository,
+      SecurityConfiguration securityConfiguration) {
+    this.authenticationManager = authenticationManager;
+    this.jwtTokenService = jwtTokenService;
+    this.usuarioRepository = usuarioRepository;
+    this.securityConfiguration = securityConfiguration;
+  }
 
   public UsuarioRespostaRetornaTokenOuMensagem autenticarUsuario(LoginUsuarioDTO loginUsuarioDTO) {
     UsuarioRespostaRetornaTokenOuMensagem retornoAutenticacaoUsuario = null;
