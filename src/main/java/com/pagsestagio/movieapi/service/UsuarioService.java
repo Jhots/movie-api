@@ -45,15 +45,11 @@ public class UsuarioService {
     Optional<Usuario> usuarioExistente =
         usuarioRepository.findByNomeUsuario(loginUsuarioDTO.nomeUsuario());
 
-    if (loginUsuarioDTO.nomeUsuario() == null || loginUsuarioDTO.senha() == null) {
-      retornoAutenticacaoUsuario =
-          new UsuarioRespostaRetornaTokenOuMensagem(
-              null,
+    if (loginUsuarioDTO.validaLoginUsuario()) {
+      retornoAutenticacaoUsuario = UsuarioRespostaRetornaTokenOuMensagem.usuarioRespostaRetornaMensagem(
               "Não foi possível fazer login com estas credenciais. Verifique os dados informados.");
     } else if (usuarioExistente.isEmpty()) {
-      retornoAutenticacaoUsuario =
-          new UsuarioRespostaRetornaTokenOuMensagem(
-              null, "Usuário não cadastrado. Tente criar um usuário.");
+      retornoAutenticacaoUsuario = UsuarioRespostaRetornaTokenOuMensagem.usuarioRespostaRetornaMensagem("Usuário não cadastrado. Tente criar um usuário.");
     } else {
       UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
           new UsernamePasswordAuthenticationToken(
@@ -63,7 +59,7 @@ public class UsuarioService {
       UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
       String token = jwtTokenService.generateToken(userDetails);
 
-      retornoAutenticacaoUsuario = new UsuarioRespostaRetornaTokenOuMensagem(token, null);
+      retornoAutenticacaoUsuario = UsuarioRespostaRetornaTokenOuMensagem.usuarioRespostaRetornaToken(token);
     }
 
     return retornoAutenticacaoUsuario;
@@ -75,9 +71,7 @@ public class UsuarioService {
     Optional<Usuario> usuarioExistente =
         usuarioRepository.findByNomeUsuario(criacaoUsuarioDTO.nomeUsuario());
 
-    if (criacaoUsuarioDTO.nomeUsuario() == null
-        || criacaoUsuarioDTO.senha() == null
-        || criacaoUsuarioDTO.funcao() == null) {
+    if (criacaoUsuarioDTO.validaCriacaoUsuario()) {
       retornoCriacaoDeUsuario =
           new UsuarioRespostaRetornaUsuarioOuMensagem(
               "Não foi possível criar este usuário. Verifique os dados informados.");
@@ -88,7 +82,6 @@ public class UsuarioService {
       Funcao funcao = new Funcao(null, criacaoUsuarioDTO.funcao());
       Usuario novoUsuario =
           new Usuario(
-              null,
               criacaoUsuarioDTO.nomeUsuario(),
               securityConfiguration.passwordEncoder().encode(criacaoUsuarioDTO.senha()),
               List.of(funcao));
@@ -100,7 +93,7 @@ public class UsuarioService {
               novoUsuario.getId(),
               novoUsuario.getNomeUsuario(),
               novoUsuario.getSenha(),
-              novoUsuario.getFuncoes().getFirst().getNome().name());
+              novoUsuario.getFuncaoPrincipal());
     }
 
     return retornoCriacaoDeUsuario;

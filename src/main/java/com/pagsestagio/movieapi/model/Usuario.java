@@ -36,12 +36,16 @@ public class Usuario {
 
   public Usuario() {}
 
-  public Usuario(String id, String nomeUsuario, String senha, List<Funcao> funcoes) {
-    this.id = id;
+  public Usuario(String nomeUsuario, String senha, List<Funcao> funcoes) {
     this.nomeUsuario = nomeUsuario;
     this.senha = senha;
     this.funcoes = funcoes;
   }
+
+  public String getFuncaoPrincipal() {
+    return this.funcoes.isEmpty() ? null : this.funcoes.getFirst().getNome().name();
+  }
+
 
   public String getId() {
     return id;

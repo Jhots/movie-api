@@ -37,7 +37,6 @@ public class UsuarioControllerTests extends IntegrationBaseTest {
 
     Usuario usuario =
         new Usuario(
-            null,
             "usuario_teste",
             securityConfiguration.passwordEncoder().encode("senha123"),
             List.of(funcao));
@@ -103,7 +102,6 @@ public class UsuarioControllerTests extends IntegrationBaseTest {
 
     Usuario usuarioExistente =
         new Usuario(
-            null,
             "usuario_duplicado",
             securityConfiguration.passwordEncoder().encode("senha123"),
             List.of(funcao));
