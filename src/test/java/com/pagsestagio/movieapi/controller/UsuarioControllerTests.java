@@ -33,7 +33,7 @@ public class UsuarioControllerTests extends IntegrationBaseTest {
 
   @Test
   public void deveRetornarOkQuandoUsuarioForAutenticadoERetornarToken() throws Exception {
-    Funcao funcao = new Funcao(null, USUARIO);
+    Funcao funcao = new Funcao(USUARIO);
 
     Usuario usuario =
         new Usuario(
@@ -98,7 +98,7 @@ public class UsuarioControllerTests extends IntegrationBaseTest {
 
   @Test
   public void deveRetornarBadRequestQuandoUsuarioNaoForCriadoERetornarMensagem() throws Exception {
-    Funcao funcao = new Funcao(null, USUARIO);
+    Funcao funcao = new Funcao(USUARIO);
 
     Usuario usuarioExistente =
         new Usuario(

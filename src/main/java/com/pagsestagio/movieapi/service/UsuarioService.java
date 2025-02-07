@@ -79,7 +79,7 @@ public class UsuarioService {
       retornoCriacaoDeUsuario =
           new UsuarioRespostaRetornaUsuarioOuMensagem("Usuário já cadastrado. Tente fazer login.");
     } else {
-      Funcao funcao = new Funcao(null, criacaoUsuarioDTO.funcao());
+      Funcao funcao = new Funcao(criacaoUsuarioDTO.funcao());
       Usuario novoUsuario =
           new Usuario(
               criacaoUsuarioDTO.nomeUsuario(),

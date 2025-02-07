@@ -32,11 +32,11 @@ public class UsuarioController {
     if (retornoService.mensagem() == null) {
       respostaRequisicao =
           ResponseEntity.ok()
-              .body(new UsuarioRespostaRetornaTokenOuMensagem(retornoService.token(), null));
+              .body(UsuarioRespostaRetornaTokenOuMensagem.usuarioRespostaRetornaToken(retornoService.token()));
     } else {
       respostaRequisicao =
           ResponseEntity.status(HttpStatus.BAD_REQUEST)
-              .body(new UsuarioRespostaRetornaTokenOuMensagem(null, retornoService.mensagem()));
+              .body(UsuarioRespostaRetornaTokenOuMensagem.usuarioRespostaRetornaMensagem(retornoService.mensagem()));
     }
 
     return respostaRequisicao;

@@ -46,7 +46,7 @@ public class UsuarioServiceTests {
 
   @Test
   public void deveAutenticarUsuarioComSucessoERetornarToken() {
-    Usuario usuario = new Usuario(null, "usuarioTeste", "senhaCriptografada", List.of());
+    Usuario usuario = new Usuario("usuarioTeste", "senhaCriptografada", List.of());
     Mockito.when(usuarioRepository.findByNomeUsuario("usuarioTeste"))
         .thenReturn(Optional.of(usuario));
     Mockito.when(authenticationManager.authenticate(Mockito.any()))
@@ -112,7 +112,7 @@ public class UsuarioServiceTests {
 
   @Test
   public void naoDeveCriarUsuarioRetornandoMensagemDeUsuarioJaCadastrado() {
-    Usuario usuario = new Usuario(null, "usuarioExistente", "senha", List.of());
+    Usuario usuario = new Usuario("usuarioExistente", "senha", List.of());
     Mockito.when(usuarioRepository.findByNomeUsuario("usuarioExistente"))
         .thenReturn(Optional.of(usuario));
 

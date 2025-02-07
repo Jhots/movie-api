@@ -23,8 +23,7 @@ public class Funcao {
 
   public Funcao() {}
 
-  public Funcao(Long id, NomeFuncao nome) {
-    this.id = id;
+  public Funcao(NomeFuncao nome) {
     this.nome = nome;
   }
 
