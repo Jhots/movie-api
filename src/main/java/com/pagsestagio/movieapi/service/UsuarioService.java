@@ -77,7 +77,8 @@ public class UsuarioService {
               "Não foi possível criar este usuário. Verifique os dados informados.");
     } else if (usuarioExistente.isPresent()) {
       retornoCriacaoDeUsuario =
-          new UsuarioRespostaRetornaUsuarioOuMensagem("Usuário já cadastrado. Tente fazer login.");
+          new UsuarioRespostaRetornaUsuarioOuMensagem(
+              "Não foi possível criar este usuário. Verifique os dados informados.");
     } else {
       Funcao funcao = new Funcao(criacaoUsuarioDTO.funcao());
       Usuario novoUsuario =
