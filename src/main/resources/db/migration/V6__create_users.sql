@@ -1,0 +1,16 @@
+CREATE TABLE USERS
+(
+    USER_ID  VARCHAR2(36)  NOT NULL,
+    USERNAME VARCHAR2(255) NOT NULL UNIQUE,
+    PASSWORD VARCHAR2(255) NOT NULL,
+    CONSTRAINT USERS_PK PRIMARY KEY (USER_ID)
+);
+
+COMMENT
+ON TABLE USERS IS '[NOT_SECURITY_APPLY] Table to store user information.';
+COMMENT
+ON COLUMN USERS.USER_ID IS '[NOT_SECURITY_APPLY] Primary key identifier for internal database queries.';
+COMMENT
+ON COLUMN USERS.USERNAME IS '[NOT_SECURITY_APPLY] Field used to store the username (must be unique).';
+COMMENT
+ON COLUMN USERS.PASSWORD IS '[NOT_SECURITY_APPLY] Field used to store the users encrypted password.';
